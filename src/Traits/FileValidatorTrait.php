@@ -68,11 +68,11 @@ trait FileValidatorTrait{
     {
         // error tracking
         $errors = [];
+        $validationAttempt = false;
 
         // initilize configuration if not called
         $this->callConfigIfNotCalled();
 
-        
         /**
         * Select file to upload. - error 401
         */
@@ -90,7 +90,7 @@ trait FileValidatorTrait{
         
         // begin multple validation
         else{
-            
+            $validationAttempt = true;
             foreach($this->fileItemsData() as $key => $file){
 
                 // Mime types
@@ -180,11 +180,13 @@ trait FileValidatorTrait{
 
         // if no error was found in the error array
         if(empty($errors)){
-            $this->data = [
-                "status"    => 200,
-                "message"   => $this->translation('200'),
-            ];
-            $this->success = true;
+            if($validationAttempt){
+                $this->data = [
+                    "status"    => 200,
+                    "message"   => $this->translation('200'),
+                ];
+                $this->success = true;
+            }
         }
 
         return $this;

@@ -37,6 +37,7 @@
   * [Get Mime Type](#get-mime-type)
   * [Not Empty](#not-empty)
   * [Is Empty](#is-empty)
+  * [Has Error](#has-error)
   * [Mime Types](#mime-types)
 * [Useful links](#useful-links)
 
@@ -432,6 +433,17 @@ File::has('avatar');
 
 ```
 File::isEmpty('avatar')
+```
+
+### Has Error
+- Returns true or false. Check if there's an error in the upload
+
+```
+$file = File::name('avatar')
+
+if($file->hasError()){
+
+}
 ```
 
 ### Mime Types

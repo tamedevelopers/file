@@ -24,10 +24,10 @@ File::name('avatar')
 
 
 // or more methods chaining
-File::name('avatar')
+File::name('avatar2')
     ->limit(3)
     ->mime('files')
-    ->driver('s3')
+    // ->driver('s3')
     ->folder('public/images')
     ->validate()
     ->save();
@@ -35,6 +35,8 @@ File::name('avatar')
 
 // closure/callable on save() and validate()
 $upload = File::name('banners')
+            ->size('50kb')
+            ->filterError([401])
             ->validate()
             ->save(function($response){
 
@@ -84,9 +86,12 @@ if(File::has('avatar')){
             Upload file
         </h3>
 
-        <div style="background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px">
-            <?= $upload->getMessage(); ?>
-        </div>
+        <?php if($upload->hasError()) {?>
+            <div style="background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px">
+                <?= $upload->getMessage(); ?>
+            </div>
+        <?php } ?>
+
         
         <!--file upload-->
         <div class="col-sm-12 mt-3" style="margin: 0 0 30px;">

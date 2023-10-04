@@ -183,7 +183,7 @@ class File extends FileMethod{
         $driver = Str::lower($driver);
 
         // only change the default driver if found
-        if(in_array($driver, array_keys($this->driverTypes)) && Tame::isInternetAvailable()){
+        if(in_array($driver, array_keys($this->driverTypes))){
             $this->config['driver'] = $driver;
         }
 
@@ -228,8 +228,8 @@ class File extends FileMethod{
     public function size($size = null)
     {
         $this->config['size'] = Tame::sizeToBytes(
-            !empty($size) && $size >= 1024 
-                ? Tame::byteToUnit($size) 
+            !empty($size) && (int) $size >= 1024
+                ? Tame::byteToUnit($size)
                 : $size ?? '2mb'
         );
 
@@ -318,6 +318,22 @@ class File extends FileMethod{
     public function getStatus()
     {
         return $this->data['status'];
+    }
+    
+    /**
+     * Check if upload has an error
+     *
+     * @return int|null
+     */
+    public function hasError()
+    {
+        $status = $this->getStatus();
+        if(!empty($status) && !$status == 0)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**

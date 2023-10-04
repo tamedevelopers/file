@@ -81,7 +81,7 @@ trait FileTrait{
 
         // Convert size to Bytes
         $config['size'] = Tame::sizeToBytes(
-            !empty($config['size']) && $config['size'] >= 1024 
+            !empty($config['size']) && (int) $config['size'] >= 1024 
                 ? Tame::byteToUnit($config['size']) 
                 : $config['size'] ?? '2mb'
         );
@@ -96,7 +96,7 @@ trait FileTrait{
 
         // check for valid driver type
         // only change the default driver if found
-        if(in_array($config['driver'], array_keys($this->driverTypes)) && Tame::isInternetAvailable()){
+        if(in_array($config['driver'], array_keys($this->driverTypes))){
             $config['driver'] = $config['driver'];
         }
 

@@ -17,25 +17,39 @@ FileConfig(
     ],
 );
 
+// easy as this
+File::name('avatar')
+    ->validate()
+    ->save();
 
+
+// or more methods chaining
+File::name('avatar')
+    ->limit(3)
+    ->mime('files')
+    ->driver('s3')
+    ->folder('public/images')
+    ->validate()
+    ->save();
+
+
+// closure/callable on save() and validate()
 $upload = File::name('banners')
-                ->limit(2)
-                // ->folder('upload')
-                // ->driver('s3')
-                ->validate()
-                ->save(function($response){
+            ->validate()
+            ->save(function($response){
 
-                    $response
-                        ->watermark('test/watermark.png', 'bottom-left', 50)
-                        // ->resize(690, 540)
-                        ->compress();
+                $response
+                    ->watermark('test/watermark.png', 'bottom-left', 50)
+                    ->resize(690, 540)
+                    ->compress();
+            });
 
 
-                    dump(
-                        $response
-                    );
+// has method
+if(File::has('avatar')){
+    // perform query
+}
 
-                });
 
 // 
 if(File::has('avatar')){

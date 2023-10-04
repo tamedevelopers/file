@@ -17,7 +17,7 @@ if (! function_exists('TameFile')) {
 }
 
 
-if (! TameIsLaravelDetect() && ! function_exists('FileConfig')) {
+if (! function_exists('FileConfig')) {
     /**
      * Global Configuration
      *
@@ -29,7 +29,6 @@ if (! TameIsLaravelDetect() && ! function_exists('FileConfig')) {
      */
     function FileConfig($message = [], $config = [], $filterError = [])
     {
-        // $File = new File();
         (new File)->globalConfig($message, $config, $filterError);
     }
 }

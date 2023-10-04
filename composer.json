@@ -1,0 +1,43 @@
+{
+    "name": "tamedevelopers/file",
+    "description": "PHP Library for uploading files",
+    "keywords": ["file","image", "image uploader", "uploader", "file uploader", "php image uploader"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fredrick Peterson", 
+            "email": "fredi.peterson2000@gmail.com"
+        },
+        {
+            "name": "Tame Developers", 
+            "email": "tamedevelopers@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "tamedevelopers/support": "^1.0.2",
+        "aws/aws-sdk-php": "^3.282.1"
+    },
+    "suggest": {
+        "aws/aws-sdk-php": "Required to use Amazon `s3` composer require aws/aws-sdk-php (^3.281.13)."
+    },
+    "autoload": {
+        "psr-4": {
+            "Tamedevelopers\\File\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "scripts": {
+        "pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices"
+    },
+    "extra": {
+        "aws/aws-sdk-php": [
+            "Ec2",
+            "CloudWatch"
+        ]
+    },
+    "minimum-stability": "stable"
+}

@@ -1,0 +1,8 @@
+/vendor
+/storage
+/public
+/.idea
+/.vscode
+/.github
+.env
+composer.lock

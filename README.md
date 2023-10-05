@@ -11,6 +11,7 @@
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Instantiate](#instantiate)
+* [Amazon Aws Dump](#amazon-aws-dump)
 * [Global Config](#global-config)
 * [Response Data](#response-data)
     * [Get Message](#get-message)
@@ -77,6 +78,22 @@ $file = new Tamedevelopers\File\File();
 - or -- `Helpers Function`
 ```
 $file = TameFile();
+```
+
+## Amazon Aws Dump
+- By default Aws load entire SDK we won't be needing
+    - Copy the below code into your root `composer.json` and then run `composer update` in terminal.
+
+```
+"scripts": {
+    "pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices"
+},
+"extra": {
+    "aws/aws-sdk-php": [
+        "Ec2",
+        "CloudWatch"
+    ]
+}
 ```
 
 ## Global Config

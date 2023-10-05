@@ -37,10 +37,6 @@ $upload = File::name('banners')
                     ->compress();
             });
 
-
-dump(
-    $upload->hasError()
-);
     
 // has method
 if(File::has('avatar')){

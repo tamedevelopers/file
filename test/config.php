@@ -31,7 +31,6 @@ FileConfig(
         'driver'        => 'local',
         'structure'     => 'default', // default|year|month|day
         'generate'      => true, // will always generate a unique() name for each uploaded file
-    ],
-    filterError: []
+    ]
 ); 
 

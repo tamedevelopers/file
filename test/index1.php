@@ -14,29 +14,30 @@ Env::loadOrFail();
 FileConfig(
     config: [
         'size' => '3mb'
-    ],
+    ]
 );
 
 // easy as this
-File::name('avatar')
-    ->validate()
-    ->save();
+// File::name('avatar')
+//     ->filter([401, 403, 500])
+//     ->validate()
+//     ->save();
 
 
-// or more methods chaining
-File::name('avatar2')
-    ->limit(3)
-    ->mime('files')
-    // ->driver('s3')
-    ->folder('public/images')
-    ->validate()
-    ->save();
+// // or more methods chaining
+// File::name('avatar2')
+//     ->limit(3)
+//     ->mime('files')
+//     // ->driver('s3')
+//     ->folder('public/images')
+//     ->validate()
+//     ->save();
 
 
 // closure/callable on save() and validate()
 $upload = File::name('banners')
-            ->size('50kb')
-            ->filterError([401])
+            ->size('500kb')
+            // ->filter(401)
             ->validate()
             ->save(function($response){
 
@@ -61,7 +62,7 @@ if(File::has('avatar')){
         // ->driver('s3')
         ->save();
 
-    dump(
+    dd(
         $file->getMessage(),
         $file->getStatus(),
         $file->first(),
@@ -89,6 +90,11 @@ if(File::has('avatar')){
         <?php if($upload->hasError()) {?>
             <div style="background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px">
                 <?= $upload->getMessage(); ?>
+                <br>
+                
+                <a href="<?= $upload->first('url'); ?>" target="_blank">
+                    Preview Data
+                </a>
             </div>
         <?php } ?>
 
@@ -98,15 +104,15 @@ if(File::has('avatar')){
             <div class="form-group">
                 <label for="upload">Image Avatar</label>
                 <input type="file" class="form-control-file" id="upload" 
-                        name="avatar" multiple>
+                        name="avatar">
             </div>
         </div>
         
         <!--file upload-->
         <div class="col-sm-12 mt-3">
             <div class="form-group">
-                <label for="upload">Banners</label>
-                <input type="file" class="form-control-file" id="upload" 
+                <label for="upload2">Banners</label>
+                <input type="file" class="form-control-file" id="upload2" 
                         name="banners[]" multiple>
             </div>
         </div>

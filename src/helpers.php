@@ -23,12 +23,11 @@ if (! function_exists('FileConfig')) {
      *
      * @param  array $message
      * @param  array $config
-     * @param  array $filterError
      * 
      * @return void
      */
-    function FileConfig($message = [], $config = [], $filterError = [])
+    function FileConfig($message = [], $config = [])
     {
-        (new File)->globalConfig($message, $config, $filterError);
+        (new File)->globalConfig($message, $config);
     }
 }

@@ -74,11 +74,14 @@ trait FileValidatorTrait{
         $this->callConfigIfNotCalled();
 
         /**
-        * Select file to upload. - error 401
+        * When form has not been submitted, request will be empty
         */
         if(self::isEmpty($this->name))
         {
-            if(isset($this->error['401'])){
+            /**
+            * Select file to upload. - error 401
+            */
+            if(self::fileIsset($this->name) && isset($this->error['401'])){
                 $this->data = [
                     'message'   => $this->translation(401),
                     'status'    => 401,
@@ -88,7 +91,7 @@ trait FileValidatorTrait{
             }
         } 
         
-        // begin multple validation
+        // begin file validation
         else{
             $validationAttempt = true;
             foreach($this->fileItemsData() as $key => $file){
@@ -234,13 +237,6 @@ trait FileValidatorTrait{
         } else{
             // merge with default data
             $this->config = $this->dataMerge();
-
-            // if filter error is defined 
-            if(!empty(TAME_FILE_ERROR['filterError'])){
-
-                // filter error to be remove from parent $this->error
-                $this->filterError(TAME_FILE_ERROR['filterError']);
-            }
         }
     }
     

@@ -339,11 +339,15 @@ class File extends FileMethod{
     /**
      * Get First Element of Uploads
      * 
-     * @return array|null
+     * @param string|null $mode
+     * 
+     * @return array|string|null
      */
-    public function first()
+    public function first($mode = null)
     {
-        return self::getUploads($this->uploads, true);
+        $data = self::getUploads($this->uploads, true);
+
+        return $data[$mode] ?? $data;
     }
 
     /**

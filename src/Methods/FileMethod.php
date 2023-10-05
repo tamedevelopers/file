@@ -11,6 +11,21 @@ use Tamedevelopers\Support\Collections\Collection;
 abstract class FileMethod{
     
     /**
+     * Check if File Input is set
+     *
+     * @param string $name
+     * @return bool
+     */
+    static public function fileIsset($name)
+    {
+        if(isset($_FILES[$name])){
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
      * Check if File Input is not empty
      *
      * @param string $name

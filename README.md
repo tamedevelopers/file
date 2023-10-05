@@ -40,6 +40,7 @@
   * [Not Empty](#not-empty)
   * [Is Empty](#is-empty)
   * [Has Error](#has-error)
+  * [Is Completed](#is-completed)
   * [Mime Types](#mime-types)
 * [Useful links](#useful-links)
 
@@ -101,7 +102,7 @@ $file = TameFile();
     - Define as `named argument`
 
 
-| Keys          |  Types            |      Description                                  |
+| Key           |  Types            |      Description                                  |
 |---------------|-------------------|---------------------------------------------------|
 | message       |  Assoc `array`    | Create all error message in different language    |
 | config        |  Assoc `array`    | Create all needed config data                     |
@@ -144,7 +145,7 @@ FileConfig(
 ### Get Message
 - This will return error message
 
-```usage
+```
 $file = File::name('html_input_name');
 
 $file->getMessage();
@@ -153,7 +154,7 @@ $file->getMessage();
 ### Get Status
 - This will return error status code
 
-```usage
+```
 $file = File::name('html_input_name');
 
 $file->getStatus();
@@ -164,14 +165,15 @@ $file->getStatus();
     - You can pass and [optional] param as string `name` \| `url`
     - Returns an array `[name, url]`
 
-```usage
+```
 ->save(function($response){
 
     $response->first();
 });
 ```
 
-```or
+- `or`
+```
 $upload = File::name('avatar')
             ->validate()
             ->save();
@@ -184,14 +186,15 @@ $upload->first('name);
 - This will get all uploaded data 
     - Returns an index array of all uploaded data
 
-```usage
+```
 ->save(function($response){
 
     $response->get();
 });
 ```
 
-```or
+- `or`
+```
 $upload = File::name('avatar')
             ->validate()
             ->save();
@@ -207,8 +210,8 @@ $upload->get();
 ```
 <input type="file" name="avatar">
 ```
-- or -- `For Multiple Data`
 
+- or -- `For Multiple Data`
 ```
 <input type="file" name="avatar[]" multiple>
 ```
@@ -217,18 +220,18 @@ $upload->get();
 - More drivers are to be added in the future
     - By default driver is set to `local`
 
-| Type      |   Description                                                                 |
+| Key       |   Description                                                                 |
 |-----------|-------------------------------------------------------------------------------|
 | s3        |   Amazon `s3` driver. The package loaded `[Ec2 and CloudWatch]` needed by s3  |
 | local     |   Local `host server` driver.                                                 |
 
-```usage
-
+```
 File::name('avatar')
     ->driver('s3');
 ```
 
-```using driver if project not in Laravel
+- `using driver if project is not in any Frameworks`
+```
 use Tamedevelopers\Support\Env;
 
 // if your project is not on on core php, then you'll need to load env.
@@ -239,7 +242,6 @@ use Tamedevelopers\Support\Env;
 Env::createOrIgnore();
 Env::load();
 
-
 File::name('avatar')
     ->driver('s3');
 ```
@@ -248,7 +250,7 @@ File::name('avatar')
 - Takes one param `string` as input name
     - Static method by default
 
-```usage
+```
 File::name('html_input_name');
 ```
 
@@ -256,7 +258,7 @@ File::name('html_input_name');
 - Takes one param `string` as `folder_path` to save file
     - Remember the system already have your `baseDirectory`
 
-```usage
+```
 File::name('avatar')
     ->folder('upload/user');
 ```
@@ -275,12 +277,13 @@ File::name('avatar')
 | 405           |   Image dimension allowed is                          |
 | 200           |   File uploaded successfully                          |
 
-```usage
+```
 File::name('avatar')
     ->filter(401, 402);
 ```
 
-```or
+- `or`
+```
 File::name('avatar')
     ->filter([401, 402, 405]);
 ```
@@ -289,7 +292,7 @@ File::name('avatar')
 - Takes one param `string` as `structure type`
     - Best used for `Media\|Blog\|Newsletter` Websites.
 
-| Type      |   Description                                                         |
+| Key       |   Description                                                         |
 |-----------|-----------------------------------------------------------------------|
 | default   |   Files will be uploaded in defaut folder path                        |
 | year      |   Files will be uploaded in `default/year` path: `folder/2023`        |
@@ -302,7 +305,7 @@ File::name('avatar')
         - Month
             - Day
 
-```usage
+```
 File::name('avatar')
     ->structure('month');
 ```
@@ -311,12 +314,13 @@ File::name('avatar')
 - Takes one param `string` \| `int`
     - size in `int` \| `kb` \| `mb` \| `gb`
 
-```usage
+```
 File::name('avatar')
     ->size('1.5mb'); // will be converted to:  1.5 * (1024 * 1024) = 1572864
 ```
 
-```or
+- `or`
+```
 File::name('avatar')
     ->size(2097152); // = 2097152|2mb
 ```
@@ -325,7 +329,7 @@ File::name('avatar')
 - Takes one param `string` \| `int`
     - Default limit is set to `1` upload
 
-```usage
+```
 File::name('avatar')
     ->limit(2);
 ```
@@ -345,7 +349,7 @@ File::name('avatar')
 | general_file      |   `['application/msword','application/pdf','text/plain','application/zip', 'application/x-zip-compressed', 'multipart/x-zip','application/x-zip-compressed' 'application/x-rar-compressed', 'application/octet-stream', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']`|
 
 
-```usage
+```
 File::name('avatar')
     ->mime('images');
 ```
@@ -355,7 +359,7 @@ File::name('avatar')
     - 1st param is `string` \| `int`. width size
     - 2nd param is `bool`. This allow to check if size should be === or >= size of uploaded image. Default is `true`
 
-```usage
+```
 $file = File::name('avatar')
         ->width(700, false);
 
@@ -367,7 +371,7 @@ dd(
 ### Height
 - Same as `width` method
 
-```usage
+```
 File::name('avatar')
     ->width(700)
     ->height(400);
@@ -377,7 +381,7 @@ File::name('avatar')
 - Takes an [optional] param as a `callable\|closure` function.
     - The method needs to be called to validate upload errors before saving
 
-```usage
+```
 File::name('banner')
     ->folder('upload/banner')
     ->width(700)
@@ -385,7 +389,8 @@ File::name('banner')
     ->validate();
 ```
 
-```or
+- `or`
+```
 File::name('banner')
     ->folder('upload/banner')
     ->validate(function($response){
@@ -398,7 +403,7 @@ File::name('banner')
 - Takes an [optional] param as a `callable\|closure` function.
     - Calling this [method] will automatically save uploaded data on `success`.
 
-```usage
+```
 File::name('banner')
     ->folder('upload/banner')
     ->validate()
@@ -408,7 +413,8 @@ File::name('banner')
     });
 ```
 
-```or
+- `or`
+```
 $file = File::name('banner')
             ->folder('upload/banner')
             ->validate()
@@ -424,7 +430,7 @@ dd(
 - Takes two param as `size` `int` width and height
     - Returns an instance of self
 
-```usage
+```
 File::name()
     ->folder('upload/banner')
     ->validate('avatar')
@@ -437,23 +443,34 @@ File::name()
 ```
 
 ### WaterMark
-- Returns an instance of self
+- Takes three param `watermarkSource` \| `position` \| `padding`
+    - [mandatory] $watermarkSource
+    - Returns an instance of self
+    - Padding is applied evenly on all position apart from `center`
 
-```usage
+| Position  key     |   Description                                 |
+|-------------------|-----------------------------------------------|
+| bottom-right      |  Default is `bottom-right`                    |
+| bottom-left       |  apply watermart to possition `bottom-left`   |
+| top-right         |  apply watermart to possition `top-right`     |
+| top-left          |  apply watermart to possition `top-left`      |
+| center            |  apply watermart to possition `center`        |
+
+```
 File::name('avatar')
     ->folder('upload/banner')
     ->validate()
     ->save(function($response){
 
         // perform watermark
-        $response->watermark('watermark.png', 'center');
+        $response->watermark('watermark.png', 'center', 50);
     });
 ```
 
 ### Compress
 - Returns an instance of self
 
-```usage
+```
 File::name('avatar')
     ->folder('upload/banner')
     ->validate()
@@ -474,7 +491,7 @@ File::name('avatar')
 - Takes one param as `string` 
     - Return an `array` \| `null`
 
-```usage
+```
 File::getImageSize('full_source_path')
 
 [
@@ -515,6 +532,17 @@ File::isEmpty('avatar')
 $file = File::name('avatar')
 
 if($file->hasError()){
+
+}
+```
+
+### Is Completed
+- Returns true or false. Check if upload has been completed
+
+```
+$file = File::name('avatar')
+
+if($file->isCompleted()){
 
 }
 ```

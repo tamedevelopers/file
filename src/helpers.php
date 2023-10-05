@@ -7,12 +7,13 @@ use Tamedevelopers\File\File;
 if (! function_exists('TameFile')) {
     /**
      * Instance of File Class
+     * @param  string|null $name
      * 
      * @return \Tamedevelopers\File\File
      */
-    function TameFile()
+    function TameFile($name = null)
     {
-        return new File();
+        return (new File)->name($name);
     }
 }
 

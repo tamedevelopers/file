@@ -48,10 +48,10 @@ class File extends FileMethod{
     /**
      * Initiliaze File Upload Using `name`
      *
-     * @param  string $name
+     * @param  string|null $name
      * @return $this
      */
-    static public function name($name)
+    static public function name($name = null)
     {
         return new static(
             $name,
@@ -107,7 +107,7 @@ class File extends FileMethod{
      * 
      * @return $this
      */
-    public function watermark($watermarkSource, $position = 'bottom-right', $padding = 10)
+    public function watermark($watermarkSource, $position = 'bottom-right', $padding = 15)
     {
         $watermark = new ImageWatermark(
             object: $this, 
@@ -313,27 +313,37 @@ class File extends FileMethod{
     /**
      * Get Status Code
      *
-     * @return int|null
+     * @return int
      */
     public function getStatus()
     {
-        return $this->data['status'];
+        return (int) $this->data['status'];
     }
     
     /**
      * Check if upload has an error
      *
-     * @return int|null
+     * @return bool
      */
     public function hasError()
     {
         $status = $this->getStatus();
-        if(!empty($status) && !$status == 0)
+        if(!empty($status) && !in_array($status, [0, 200]))
         {
             return true;
         }
 
         return false;
+    }
+    
+    /**
+     * Check if file has been uploaded
+     *
+     * @return bool
+     */
+    public function isCompleted()
+    {
+        return $this->getStatus() === 200;
     }
 
     /**

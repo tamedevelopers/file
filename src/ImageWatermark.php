@@ -25,7 +25,7 @@ class ImageWatermark {
      * 
      * @return bool True if the watermark was successfully added, false otherwise.
      */
-    public function watermark($watermarkSource = null, $position = 'bottom-right', $padding = 10) 
+    public function watermark($watermarkSource = null, $position = 'bottom-right', $padding = 15)
     {
         $this->loop(function($response) use($watermarkSource, $position, $padding){
             foreach($response->uploads as $upload){

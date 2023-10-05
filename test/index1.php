@@ -24,16 +24,6 @@ FileConfig(
 //     ->save();
 
 
-// // or more methods chaining
-// File::name('avatar2')
-//     ->limit(3)
-//     ->mime('files')
-//     // ->driver('s3')
-//     ->folder('public/images')
-//     ->validate()
-//     ->save();
-
-
 // closure/callable on save() and validate()
 $upload = File::name('banners')
             ->size('500kb')
@@ -48,25 +38,26 @@ $upload = File::name('banners')
             });
 
 
+dump(
+    $upload->hasError()
+);
+    
 // has method
 if(File::has('avatar')){
-    // perform query
-}
 
+    // $file = File::name('avatar')
+    //             ->limit(3)
+    //             ->mime('files')
+    //             ->folder('public/files')
+    //             ->driver('s3')
+    //             ->validate()
+    //             ->save();
 
-// 
-if(File::has('avatar')){
-
-    $file = File::name('avatar')
-        ->validate()
-        // ->driver('s3')
-        ->save();
-
-    dd(
-        $file->getMessage(),
-        $file->getStatus(),
-        $file->first(),
-    );
+    // dd(
+    //     $file->getMessage(),
+    //     $file->getStatus(),
+    //     $file->first(),
+    // );
 }
     
 ?>
@@ -96,6 +87,8 @@ if(File::has('avatar')){
                     Preview Data
                 </a>
             </div>
+        <?php } else  {?>
+            
         <?php } ?>
 
         

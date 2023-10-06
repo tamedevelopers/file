@@ -9,7 +9,7 @@ FileConfig(
         '401'   => 'Select file to upload',
         '402'   => 'File upload is greater than allowed size of:',
         '403'   => 'Maximum file upload exceeded. Limit is:',
-        '404'   => 'Uploaded file format not allowed. Allowed formats:',
+        '404'   => 'Uploaded file format not allowed! allowed format is:',
         '405'   => 'Image dimension allowed is:',
         '405x'  => 'Image dimension should be greater than or equal to:',
         '200'   => 'File uploaded successfully:',
@@ -31,6 +31,10 @@ FileConfig(
         'driver'        => 'local',
         'structure'     => 'default', // default|year|month|day
         'generate'      => true, // will always generate a unique() name for each uploaded file
+    ],
+    class: [
+        'error'     => 'bg-danger',
+        'success'   => 'bg-success',
     ]
 ); 
 

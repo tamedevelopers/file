@@ -14,39 +14,43 @@ Env::loadOrFail();
 FileConfig(
     config: [
         'size' => '3mb'
+    ],
+    class: [
+        'error'   => 'background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px',
+        'success' => 'background: #c3f9c3; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px',
     ]
 );
 
 // easy as this
-// File::name('avatar')
-//     ->filter([401, 403, 500])
-//     ->validate()
-//     ->save();
+// File::name('avatar')->save();
 
 
-// closure/callable on save() and validate()
+// or helper function
+// TameFile('avatar')->save();
+
+
+// [optional] closure/callable function, 
+// When using `save()` and `validate()` method.
 $upload = File::name('banners')
             ->size('500kb')
-            // ->filter(401)
-            ->validate()
             ->save(function($response){
 
                 $response
-                    ->watermark('test/watermark.png', 'bottom-left', 50)
+                    ->watermark('test/watermark.png', 'center')
                     ->resize(690, 540)
                     ->compress();
             });
 
-    
+
 // has method
 if(File::has('avatar')){
 
     // $file = File::name('avatar')
     //             ->limit(3)
     //             ->mime('files')
+    //             ->filter([401, 403, 500])
     //             ->folder('public/files')
     //             ->driver('s3')
-    //             ->validate()
     //             ->save();
 
     // dd(
@@ -74,19 +78,16 @@ if(File::has('avatar')){
             Upload file
         </h3>
 
-        <?php if($upload->hasError()) {?>
-            <div style="background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px">
+        <div style="<?= $upload->getClass(); ?>">
+
+            <?php if($upload->hasError()) {?>
                 <?= $upload->getMessage(); ?>
-                <br>
-                
+            <?php } elseif($upload->isCompleted())  {?>
                 <a href="<?= $upload->first('url'); ?>" target="_blank">
                     Preview Data
                 </a>
-            </div>
-        <?php } else  {?>
-            
-        <?php } ?>
-
+            <?php } ?>
+        </div>
         
         <!--file upload-->
         <div class="col-sm-12 mt-3" style="margin: 0 0 30px;">

@@ -43,6 +43,13 @@ trait FilePropertyTrait{
     private $success = false;
     
     /**
+     * Keep track of manually calling the validate method
+     *
+     * @var bool
+     */
+    private $isValidatedCalled = false;
+    
+    /**
      * All available drivers
      * @var array
      */
@@ -88,5 +95,14 @@ trait FilePropertyTrait{
         '404' => 404,
         '405' => 405,
         '200' => 200
+    ];
+
+    /**
+     * Css Class Error handler
+     * @var array
+     */
+    private $class = [
+        'error'     => 'bg-danger',
+        'success'   => 'bg-success',
     ];
 }

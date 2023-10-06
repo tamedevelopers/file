@@ -2,10 +2,14 @@
 
 namespace Tamedevelopers\File;
 
+use Exception;
+use Tamedevelopers\Support\Env;
 use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\Methods\FileMethod;
 use Tamedevelopers\File\Traits\CommonTrait;
+use Tamedevelopers\Support\Capsule\Manager;
 use Tamedevelopers\File\Traits\FileStorageTrait;
+use Tamedevelopers\Support\Capsule\CustomException;
 
 class FileStorage extends FileMethod{
 
@@ -83,8 +87,16 @@ class FileStorage extends FileMethod{
 
         // check if driver is local
         if(!$this->isLocalDriver()){
+            // driver
+            $driver = $this->config['driver'];
+
+            // validate if package is installed
+            $this->isDriverPackageInstalled(
+                $this->getCloudAssociateClass($driver)
+            );
+
             // initialize third-party bucket
-            $bucket = new $this->driverTypes[$this->config['driver']]();
+            $bucket = new $this->driverTypes[$driver]();
 
             // get filename without extension
             $fileName = pathinfo($migrate['name'], PATHINFO_FILENAME);
@@ -131,6 +143,55 @@ class FileStorage extends FileMethod{
             'name'   => $generateName,
             'driver' => $this->config['driver'],
         ]);
+    }
+
+    
+    /**
+     * Get Class Associated with drivers, for selected Cloud storage
+     *
+     * @param  string|null $mode
+     * @return void
+     */
+    private function getCloudAssociateClass($mode = null)
+    {
+        return [
+            's3' => [
+                'exists'    => class_exists('Aws\S3\S3Client'),
+                'message'   => "Class Aws\S3\S3Client not found: \nRequire the package by running: `composer require aws/aws-sdk-php`\n",
+            ],
+        ][$mode] ?? [
+            'exists'    => false,
+            'message'   => "Unkown Driver Bucket Selected",
+        ];
+    }
+    
+    /**
+     * Check If Driver Package has been installed
+     *
+     * @param  mixed $class
+     * @return void
+     */
+    static private function isDriverPackageInstalled($data = '')
+    {
+        try {
+            if (!$data['exists']) {
+                throw new CustomException(
+                    $data['message'] . (new Exception)->getTraceAsString()
+                );
+            } 
+        } catch (CustomException $e) {
+            // Handle the exception silently (turn off error reporting)
+            error_reporting(0);
+
+            Manager::setHeaders(404, function() use($e){
+
+                // create error logger
+                Env::bootLogger();
+
+                // Trigger a custom error
+                trigger_error($e->getMessage(), E_USER_ERROR);
+            });
+        }
     }
 
 }

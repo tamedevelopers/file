@@ -16,8 +16,7 @@
     ],
     "require": {
         "php": ">=8.0",
-        "tamedevelopers/support": "^1.0.2",
-        "aws/aws-sdk-php": "^3.282.0"
+        "tamedevelopers/support": "^1.0.2"
     },
     "suggest": {
         "aws/aws-sdk-php": "Required to use Amazon `s3` composer require aws/aws-sdk-php (^3.282.0)."
@@ -28,15 +27,6 @@
         },
         "files": [
             "src/helpers.php"
-        ]
-    },
-    "scripts": {
-        "pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices"
-    },
-    "extra": {
-        "aws/aws-sdk-php": [
-            "Ec2",
-            "CloudWatch"
         ]
     },
     "minimum-stability": "stable"

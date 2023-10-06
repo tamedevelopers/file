@@ -11,11 +11,12 @@
 * [Requirements](#requirements)
 * [Installation](#installation)
 * [Instantiate](#instantiate)
-* [Amazon Aws Dump](#amazon-aws-dump)
+* [Amazon Aws S3](#amazon-aws-s3)
 * [Global Config](#global-config)
 * [Response Data](#response-data)
     * [Get Message](#get-message)
     * [Get Status](#get-status)
+    * [Get Class](#get-class)
     * [First](#first)
     * [Get](#get)
 * [Usage](#usage)
@@ -81,7 +82,8 @@ $file = new Tamedevelopers\File\File();
 $file = TameFile();
 ```
 
-## Amazon Aws Dump
+## Amazon Aws S3
+- To use s3 first require `composer require aws/aws-sdk-php`
 - By default Aws load entire SDK we won't be needing
     - Copy the below code into your root `composer.json` and then run `composer update` in terminal.
 
@@ -102,10 +104,11 @@ $file = TameFile();
     - Define as `named argument`
 
 
-| Key           |  Types            |      Description                                  |
-|---------------|-------------------|---------------------------------------------------|
-| message       |  Assoc `array`    | Create all error message in different language    |
-| config        |  Assoc `array`    | Create all needed config data                     |
+| Key           |  Types            |      Description                  |
+|---------------|-------------------|-----------------------------------|
+| message       |  Assoc `array`    | Create all error messages         |
+| config        |  Assoc `array`    | Create all needed config data     |
+| class         |  Assoc `array`    | Create error and success class    |
 
 ```config
 FileConfig(
@@ -135,6 +138,10 @@ FileConfig(
         'driver'        => 'local',
         'structure'     => 'default', // default|year|month|day
         'generate'      => true, // will always generate a unique() name for each uploaded file
+    ],
+    class: [
+        'error'     => 'bg-danger',
+        'success'   => 'bg-success',
     ]
 );
 ```
@@ -144,7 +151,6 @@ FileConfig(
 
 ### Get Message
 - This will return error message
-
 ```
 $file = File::name('html_input_name');
 
@@ -153,11 +159,18 @@ $file->getMessage();
 
 ### Get Status
 - This will return error status code
-
 ```
 $file = File::name('html_input_name');
 
 $file->getStatus();
+```
+
+### Get Class
+- This will only return msg, if there's an error or success
+```
+$file = File::name('html_input_name');
+
+$file->getClass();
 ```
 
 ### First
@@ -174,9 +187,7 @@ $file->getStatus();
 
 - `or`
 ```
-$upload = File::name('avatar')
-            ->validate()
-            ->save();
+$upload = File::name('avatar')->save();
 
 $upload->first('url);
 $upload->first('name);
@@ -196,7 +207,6 @@ $upload->first('name);
 - `or`
 ```
 $upload = File::name('avatar')
-            ->validate()
             ->save();
 
 $upload->first();
@@ -348,7 +358,6 @@ File::name('avatar')
 | general_media     |   `['audio/mpeg','audio/x-wav', 'video/mp4','video/mpeg','video/quicktime','video/x-msvideo','video/x-ms-wmv']`   |
 | general_file      |   `['application/msword','application/pdf','text/plain','application/zip', 'application/x-zip-compressed', 'multipart/x-zip','application/x-zip-compressed' 'application/x-rar-compressed', 'application/octet-stream', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']`|
 
-
 ```
 File::name('avatar')
     ->mime('images');
@@ -378,35 +387,28 @@ File::name('avatar')
 ```
 
 ### Validate
-- Takes an [optional] param as a `callable\|closure` function.
-    - The method needs to be called to validate upload errors before saving
+- [optional] Method can be use, to return error message.
+    - Takes an [optional] param as a `callable\|closure` function.
 
-```
-File::name('banner')
-    ->folder('upload/banner')
-    ->width(700)
-    ->height(400)
-    ->validate();
-```
 
-- `or`
 ```
 File::name('banner')
     ->folder('upload/banner')
     ->validate(function($response){
 
         // perform any other needed task in here
+        echo $response->getMessage();
+        return;
     });
 ```
 
 ### Save
 - Takes an [optional] param as a `callable\|closure` function.
-    - Calling this [method] will automatically save uploaded data on `success`.
+    - Calling this [method] will automatically save the data.
 
 ```
 File::name('banner')
     ->folder('upload/banner')
-    ->validate()
     ->save(function($response){
 
         // perform any other needed task in here
@@ -417,7 +419,6 @@ File::name('banner')
 ```
 $file = File::name('banner')
             ->folder('upload/banner')
-            ->validate()
             ->save();
 
 dd(
@@ -433,7 +434,6 @@ dd(
 ```
 File::name()
     ->folder('upload/banner')
-    ->validate('avatar')
     ->save(function($response){
 
         // perform resize
@@ -459,7 +459,6 @@ File::name()
 ```
 File::name('avatar')
     ->folder('upload/banner')
-    ->validate()
     ->save(function($response){
 
         // perform watermark
@@ -473,7 +472,6 @@ File::name('avatar')
 ```
 File::name('avatar')
     ->folder('upload/banner')
-    ->validate()
     ->save(function($response){
 
         // perform compressor

@@ -118,7 +118,7 @@ class ImageWatermark {
         }
 
         // Add the watermark to the source image.
-        if (!imagecopy($imageSource, $watermarkSource, $watermark_x, $watermark_y, 0, 0, $watermark_width, $watermark_height)) {
+        if (!imagecopy($imageSource, $watermarkSource, (int) $watermark_x, (int) $watermark_y, 0, 0, (int) $watermark_width, (int) $watermark_height)) {
             return false;
         }
 

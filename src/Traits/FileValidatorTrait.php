@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Traits;
 
-use Tamedevelopers\Support\Str;
+
 use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\FileStorage;
 
@@ -69,6 +69,7 @@ trait FileValidatorTrait{
         // error tracking
         $errors = [];
         $validationAttempt = false;
+        $this->isValidatedCalled = true;
 
         // initilize configuration if not called
         $this->callConfigIfNotCalled();
@@ -93,6 +94,7 @@ trait FileValidatorTrait{
         
         // begin file validation
         else{
+
             $validationAttempt = true;
             foreach($this->fileItemsData() as $key => $file){
 
@@ -237,6 +239,9 @@ trait FileValidatorTrait{
         } else{
             // merge with default data
             $this->config = $this->dataMerge();
+
+            // class
+            $this->class = TAME_FILE_ERROR['class'];
         }
     }
     

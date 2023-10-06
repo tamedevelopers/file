@@ -2,10 +2,20 @@
 
 namespace Tamedevelopers\File\Traits;
 
-/**
- * @property mixed $config
- */
+
 trait CommonTrait{
+    
+    /**
+     * Only ignore if validate metho, has been manually called
+     *
+     * @return mixed
+     */
+    public function ignoreIfValidatorHasBeenCalled()
+    {
+        if(!$this->isValidatedCalled){
+            $this->validate();
+        }
+    }
     
     /**
      * Check if is local driver

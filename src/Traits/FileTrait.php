@@ -43,9 +43,10 @@ trait FileTrait{
      *
      * @param  array $message
      * @param  array $config
+     * @param  array $class
      * @return void
      */
-    public function globalConfig($message = [], $config = [])
+    public function globalConfig($message = [], $config = [], $class = [])
     {
         // define constant to hold global error handler
         if(!defined('TAME_FILE_ERROR')){
@@ -55,7 +56,7 @@ trait FileTrait{
                 '401'   => 'Select file to upload',
                 '402'   => 'File upload is greater than allowed size of:',
                 '403'   => 'Maximum file upload exceeded. Limit is:',
-                '404'   => 'Uploaded file format not allowed. Allowed formats:',
+                '404'   => 'Uploaded file format not allowed! allowed format is:',
                 '405'   => 'Image dimension allowed is:',
                 '405x'  => 'Image dimension should be greater than or equal to:',
                 '200'   => 'File uploaded successfully:',
@@ -68,7 +69,7 @@ trait FileTrait{
                 'files' => 'files',
                 'file'  => 'file',
             ];
-
+            
             // create config
             $config = array_merge([
                 'limit'         => 1,
@@ -81,6 +82,11 @@ trait FileTrait{
                 'generate'      => true, // will always generate a unique() name for each uploaded file
             ], $config);
 
+            // create class
+            $class = array_merge([
+                'error'   => 'alert alert-danger',
+                'success' => 'alert alert-success',
+            ], $class);
 
             // Convert size to Bytes
             $config['size'] = Tame::sizeToBytes(
@@ -96,7 +102,8 @@ trait FileTrait{
 
             // check for valid driver type
             // only change the default driver if found
-            if(in_array($config['driver'], array_keys($this->driverTypes))){
+            if(in_array($config['driver'], array_keys($this->driverTypes)))
+            {
                 $config['driver'] = $config['driver'];
             }
 
@@ -104,6 +111,7 @@ trait FileTrait{
             $default = [
                 'message' => $message,
                 'config'  => $config,
+                'class'   => $class,
             ];
 
             define('TAME_FILE_ERROR', $default);
@@ -119,7 +127,7 @@ trait FileTrait{
      * 401 => Select file to upload",
      * 402 => File upload is greater than allowed size of",
      * 403 => Maximum file upload exceeded. Limit is:",
-     * 404 => Uploaded file format not allowed. Allowed format is:",
+     * 404 => Uploaded file format not allowed! allowed format is:",
      * 405 => Image size allowed error"
      * 200 => File uploaded successfully"
      * 

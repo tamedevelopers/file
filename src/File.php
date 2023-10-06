@@ -58,7 +58,7 @@ class File extends FileMethod{
             self::convertToFileHelper()
         );
     }
-    
+
     /**
      * Begin Upload Validation
      *
@@ -83,6 +83,8 @@ class File extends FileMethod{
      */
     public function save(callable $function = null)
     {
+        $this->ignoreIfValidatorHasBeenCalled();
+
         if($this->success){
             if(empty($this->folder)){
                 $this->folder = 'public/images';
@@ -318,6 +320,30 @@ class File extends FileMethod{
     public function getStatus()
     {
         return (int) $this->data['status'];
+    }
+    
+    /**
+     * Get Class Error
+     *
+     * @return string
+     */
+    public function getClass()
+    {
+        if($this->hasError()){
+            return $this->class['error'];
+        }
+
+        return $this->success ? $this->class['success'] : null;
+    }
+
+    /**
+     * Get Uploader name
+     * 
+     * @return string|null
+     */
+    public function getName()
+    {
+        return $this->name;
     }
     
     /**

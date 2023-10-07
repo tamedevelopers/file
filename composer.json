@@ -11,12 +11,12 @@
         },
         {
             "name": "Tame Developers", 
-            "email": "tamedevelopers@gmail.com"
+            "email": "tamedevelopers@gmail.com" 
         }
     ],
     "require": {
         "php": ">=8.0",
-        "tamedevelopers/support": "^1.0.2"
+        "tamedevelopers/support": "^2.0.0"
     },
     "suggest": {
         "aws/aws-sdk-php": "Required to use Amazon `s3` composer require aws/aws-sdk-php (^3.282.0)."

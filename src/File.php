@@ -9,6 +9,7 @@ use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\ImageCompress;
 use Tamedevelopers\File\ImageWatermark;
+use Tamedevelopers\Validator\Validator;
 use Tamedevelopers\File\ImageAutoresize;
 use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Methods\FileMethod;
@@ -18,6 +19,16 @@ use Tamedevelopers\File\Traits\FilePropertyTrait;
 use Tamedevelopers\File\Traits\FileValidatorTrait;
 
 
+/**
+ * File
+ *
+ * @package   tamedevelopers\file
+ * @author    Tame Developers <tamedevelopers@gmail.com>
+ * @author    Fredrick Peterson <fredi.peterson2000@gmail.com>
+ * @copyright 2021-2023 Tame Developers
+ * @license   http://www.opensource.org/licenses/MIT The MIT License
+ * @link https://github.com/tamedevelopers/file
+ */
 class File extends FileMethod{
 
     use FilePropertyTrait, 
@@ -67,16 +78,17 @@ class File extends FileMethod{
      */
     public function validate(callable $function = null)
     {
+        $this->proceedToValidate();
+
         if(!$this->success){
-            $this->proceedToValidate()
-                ->callback($function);
+            $this->callback($function);
         }
 
         return $this;
     }
     
     /**
-     * Begin Upload Validation
+     * Begin Upload Confirmation
      *
      * @param  callable $function
      * @return $this
@@ -394,6 +406,30 @@ class File extends FileMethod{
     public function get()
     {
         return self::getUploads($this->uploads);
+    }
+
+    /**
+     * Return validator form request
+     * 
+     * @return Tamedevelopers\Validator\Validator
+     */
+    public function form()
+    {
+        return (new Validator)
+                    ->token(false)
+                    ->all();
+    }
+
+    /**
+     * Echo `json_encode` with response and message
+     *
+     * @param  int $response
+     * @param  mixed $message
+     * @return mixed
+     */
+    public function echoJson(int $response = 0, $message = null)
+    {
+        return Tame::echoJson($response, $message);
     }
 
     /**

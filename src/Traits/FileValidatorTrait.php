@@ -218,8 +218,8 @@ trait FileValidatorTrait{
      */
     private function translation($mode = null)
     {
-        return defined('TAME_FILE_ERROR') 
-                ? TAME_FILE_ERROR['message'][$mode] ?? TAME_FILE_ERROR['message'] 
+        return defined('TAME_FILE_CONFIG') 
+                ? TAME_FILE_CONFIG['message'][$mode] ?? TAME_FILE_CONFIG['message'] 
                 : null;
     }
     
@@ -231,7 +231,7 @@ trait FileValidatorTrait{
     private function callConfigIfNotCalled()
     {
         // define constant to hold global error handler
-        if(!defined('TAME_FILE_ERROR')){
+        if(!defined('TAME_FILE_CONFIG')){
             $this->globalConfig();
 
             // merge with default data
@@ -241,7 +241,7 @@ trait FileValidatorTrait{
             $this->config = $this->dataMerge();
 
             // class
-            $this->class = TAME_FILE_ERROR['class'];
+            $this->class = TAME_FILE_CONFIG['class'];
         }
     }
     
@@ -252,8 +252,8 @@ trait FileValidatorTrait{
      */
     private function dataMerge()
     {
-        // default data from `TAME_FILE_ERROR`
-        $config = array_merge($this->config, TAME_FILE_ERROR['config']);
+        // default data from `TAME_FILE_CONFIG`
+        $config = array_merge($this->config, TAME_FILE_CONFIG['config']);
 
         // Merge config only when custom setting is not empty
         foreach ($this->config as $key => $value) {

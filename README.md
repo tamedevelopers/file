@@ -19,6 +19,7 @@
     * [Get Class](#get-class)
     * [First](#first)
     * [Get](#get)
+    * [Form](#form)
 * [Usage](#usage)
   * [INPUT HTML STRUCTURE](#input-html-structure)
   * [Driver](#driver)
@@ -211,6 +212,17 @@ $upload = File::name('avatar')
 
 $upload->first();
 $upload->get();
+```
+
+### Form
+- Return form request data
+    - This will return `validator package` object [Validator](https://github.com/tamedevelopers/validator) 
+
+```
+->save(function($response){
+
+    $response->form();
+});
 ```
 
 ## Usage

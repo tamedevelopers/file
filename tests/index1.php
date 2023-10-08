@@ -22,18 +22,23 @@ FileConfig(
 );
 
 // easy as this
-// File::name('avatar')->save();
+// File::name('banners')->save();
 
 
 // or helper function
-// TameFile('avatar')->save();
+// TameFile('banners')->save();
 
 
 // [optional] closure/callable function, 
 // When using `save()` and `validate()` method.
-$upload = File::name('banners')
+$upload = File::name('avatar')
             ->size('500kb')
             ->save(function($response){
+
+
+                dd(
+                    $response->form()
+                );
 
                 $response
                     ->watermark('test/watermark.png', 'center')
@@ -98,17 +103,13 @@ if(File::has('avatar')){
             </div>
         </div>
         
-        <!--file upload-->
-        <div class="col-sm-12 mt-3">
-            <div class="form-group">
-                <label for="upload2">Banners</label>
-                <input type="file" class="form-control-file" id="upload2" 
-                        name="banners[]" multiple>
-            </div>
+        <div>
+            <label for="html">Age</label>
+            <input type="text" name="age" value="<?= old('age'); ?>">
         </div>
 
         <button type="submit" style="margin-top: 40px;">
-            Upload File
+            Submit Data
         </button>
         
     </form>

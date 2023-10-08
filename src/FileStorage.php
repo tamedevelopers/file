@@ -107,6 +107,7 @@ class FileStorage extends FileMethod{
             // replace the migrate data
             $migrate['urlPath']     = $save;
             $migrate['path']        = $fileName;
+            $migrate['name']        = $fileName;
         }
         
         return $migrate;

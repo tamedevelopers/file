@@ -177,7 +177,7 @@ $file->getClass();
 ### First
 - This will get the first uploaded data 
     - You can pass and [optional] param as string `name` \| `url`
-    - Returns an array `[name, url]`
+    - Returns an array `[name, path, url]`
 
 ```
 ->save(function($response){
@@ -196,7 +196,7 @@ $upload->first('name);
 
 ### Get
 - This will get all uploaded data 
-    - Returns an index array of all uploaded data
+    - Returns an index array of all uploaded data, `[name, path, url]`
 
 ```
 ->save(function($response){

@@ -86,7 +86,8 @@ abstract class FileMethod{
             if(self::isArray($uploads)){
                 $uploads = $uploads[0];
                 return [
-                    'name'  => $uploads['path'],
+                    'name'  => $uploads['name'],
+                    'path'  => $uploads['path'],
                     'url'   => $uploads['urlPath'],
                 ];
             }
@@ -94,7 +95,8 @@ abstract class FileMethod{
             $files = [];
             foreach($uploads as $key => $upload){
                 $files[$key] = [
-                    'name'  => $upload['path'],
+                    'name'  => $upload['name'],
+                    'path'  => $upload['path'],
                     'url'   => $upload['urlPath'],
                 ];
             }

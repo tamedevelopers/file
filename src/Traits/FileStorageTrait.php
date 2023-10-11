@@ -73,8 +73,9 @@ trait FileStorageTrait {
 
         // loop through each directory path
         foreach($directorySegments as $key => $segment){
-
-            $segmentPath .= '/' . $segment;
+            
+            $separator = $key === 0 ? '' : '/';
+            $segmentPath .= $separator . $segment;
 
             // create absolute path
             $fullPath = "{$this->config['baseDir']}{$segmentPath}";

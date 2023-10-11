@@ -99,7 +99,7 @@ class File extends FileMethod{
 
         if($this->success){
             if(empty($this->folder)){
-                $this->folder = 'public/images';
+                $this->folder = 'images';
             }
 
             $this->proceedToSave()

@@ -76,7 +76,7 @@ trait FileTrait{
                 'size'          => 2097152, // 2mb
                 'mime'          => 'images', // video|audio|files|images|general_image|general_media|general_file
                 'baseUrl'       => domain(),
-                'baseDir'       => base_path(),
+                'baseDir'       => base_path('public'),
                 'driver'        => 'local', // local|s3
                 'structure'     => 'default', // default|year|month|day
                 'generate'      => true, // will always generate a unique() name for each uploaded file

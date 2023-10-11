@@ -112,7 +112,7 @@ $file = TameFile();
 | class         |  Assoc `array`    | Create error and success class    |
 
 ```config
-FileConfig(
+config_file(
     message: [
         '401'   => 'Select file to upload',
         '402'   => 'File upload is greater than allowed size of:',
@@ -144,6 +144,15 @@ FileConfig(
         'error'     => 'bg-danger',
         'success'   => 'bg-success',
     ]
+);
+```
+
+- or --  using file class method `Global Config`
+```
+(new File)->globalConfig(
+    message: [], 
+    config: [],
+    class: []
 );
 ```
 

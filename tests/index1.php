@@ -11,7 +11,7 @@ include_once __DIR__  . "/../vendor/autoload.php";
 Env::loadOrFail();
 
 
-FileConfig(
+config_file(
     config: [
         'size' => '3mb'
     ],

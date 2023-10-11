@@ -4,7 +4,7 @@ include_once "../src/ultimateUploader.php";
 
 
 // Configure the file uploader using global function helper
-FileConfig(
+config_file(
     message: [
         '401'   => 'Select file to upload',
         '402'   => 'File upload is greater than allowed size of:',

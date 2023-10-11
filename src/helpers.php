@@ -18,7 +18,7 @@ if (! function_exists('TameFile')) {
 }
 
 
-if (! function_exists('FileConfig')) {
+if (! function_exists('config_file')) {
     /**
      * Global Configuration
      *
@@ -28,7 +28,7 @@ if (! function_exists('FileConfig')) {
      * 
      * @return void
      */
-    function FileConfig($message = [], $config = [], $class = [])
+    function config_file($message = [], $config = [], $class = [])
     {
         (new File)->globalConfig($message, $config, $class);
     }

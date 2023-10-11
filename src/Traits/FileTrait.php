@@ -114,7 +114,10 @@ trait FileTrait{
                 'class'   => $class,
             ];
 
-            define('TAME_FILE_CONFIG', $default);
+            if(!defined('TAME_FILE_CONFIG')){
+                define('TAME_FILE_CONFIG', $default);
+            }
+
         }
     }
 

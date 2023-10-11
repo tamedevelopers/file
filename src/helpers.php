@@ -25,7 +25,7 @@ if (! function_exists('config_file')) {
      * @param  array $message
      * @param  array $config
      * @param  array $class
-     * 
+     *  
      * @return void
      */
     function config_file($message = [], $config = [], $class = [])

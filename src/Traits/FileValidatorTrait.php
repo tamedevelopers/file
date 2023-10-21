@@ -104,7 +104,7 @@ trait FileValidatorTrait{
                 // mimeExtensions
                 $mimeExtensions = $this->allowedMimeType()['extension'][$this->config['mime']]  ?? $this->allowedMimeType()['extension']['images'];
 
-                // if image witdh ad height is allowed
+                // if image width and height is allowed
                 $imageSizeAllowed = $this->isImageWithHeightAllowed($file->imageSize());
 
                 /**
@@ -200,13 +200,13 @@ trait FileValidatorTrait{
     /**
      * Run a callback 
      *
-     * @param  callable $function
+     * @param  Closure $function
      * @return mixed
      */
-    private function callback(callable $function = null)
+    private function callback($closure = null)
     {
-        if(is_callable($function)){
-            $function($this);
+        if(Tame::isClosure($closure)){
+            $closure($this);
         }
     }
     

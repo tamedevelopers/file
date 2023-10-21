@@ -58,6 +58,23 @@ trait FileStorageTrait {
     }
     
     /**
+     * Create Base Directory
+     *
+     * @return void
+     */
+    protected function createBaseDirectory()
+    {
+        $baseDirectory = $this->config['baseDir'];
+
+        if(!is_dir($baseDirectory)){
+            @mkdir($baseDirectory, 0777);
+
+            // Create index file
+            $this->createDefaultRestrictedFiles($baseDirectory);
+        }
+    }
+    
+    /**
      * Create Non Existable Base Folder
      *
      * @param  mixed $uploadDirectory

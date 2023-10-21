@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File;
 
-use Tamedevelopers\File\ImageCompress;
+use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\Traits\CommonTrait;
 use Tamedevelopers\File\Traits\FileMagicTrait;
 
@@ -23,11 +23,11 @@ class ImageWatermark {
      * 
      * @param  int $padding Padding in pixels (applied to all positions except 'center')
      * 
-     * @return bool True if the watermark was successfully added, false otherwise.
+     * @return void
      */
     public function watermark($watermarkSource = null, $position = 'bottom-right', $padding = 15)
     {
-        $this->loop(function($response) use($watermarkSource, $position, $padding){
+        $this->loop(function($response) use($watermarkSource, $position, $padding) {
             foreach($response->uploads as $upload){
 
                 // resource
@@ -35,6 +35,11 @@ class ImageWatermark {
 
                 // GdImage object
                 $gdImage = $response->createGDImage($imageSource, $upload['fullPath']);
+
+                // if not an instance of GdImage
+                if(!$gdImage instanceof \GdImage){
+                    return;
+                }
                 
                 // Get the dimensions of the source image.
                 $source_width = imagesx($gdImage);
@@ -42,6 +47,11 @@ class ImageWatermark {
 
                 // full path to watermark image
                 $watermarkImage = base_path($watermarkSource);
+
+                // if watermark file doesn't exists
+                if(!Tame::exists($watermarkImage)){
+                    return;
+                }
 
                 // watermark GdImage object
                 $watermarkGDImage = $response->createGDImage(getimagesize($watermarkImage), $watermarkImage);
@@ -64,7 +74,7 @@ class ImageWatermark {
 
                 // save image to path
                 if($check){
-                    (new ImageCompress)->saveImage(
+                    $this->saveImage(
                         gdImage: $gdImage,
                         filePath: $upload['fullPath']
                     );

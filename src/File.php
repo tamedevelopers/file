@@ -73,15 +73,15 @@ class File extends FileMethod{
     /**
      * Begin Upload Validation
      *
-     * @param  callable $function
+     * @param  Closure|null $closure
      * @return $this
      */
-    public function validate(callable $function = null)
+    public function validate($closure = null)
     {
         $this->proceedToValidate();
 
         if(!$this->success){
-            $this->callback($function);
+            $this->callback($closure);
         }
 
         return $this;
@@ -90,10 +90,10 @@ class File extends FileMethod{
     /**
      * Begin Upload Confirmation
      *
-     * @param  callable $function
+     * @param  Closure|null $closure
      * @return $this
      */
-    public function save(callable $function = null)
+    public function save($closure = null)
     {
         $this->ignoreIfValidatorHasBeenCalled();
 
@@ -103,7 +103,7 @@ class File extends FileMethod{
             }
 
             $this->proceedToSave()
-                    ->callback($function);
+                    ->callback($closure);
         }
 
         return $this;
@@ -221,6 +221,8 @@ class File extends FileMethod{
      * Set Folder Structure Creation
      *
      * @param string $structure
+     * - Keys [default, year, month, day]
+     * 
      * @return $this
      */
     public function structure($structure)
@@ -418,6 +420,23 @@ class File extends FileMethod{
         return (new Validator)
                     ->token(false)
                     ->all();
+    }
+
+    /**
+     * Unlink File from Server
+     *
+     * @param string $fileToUnlink
+     * @param string|null $checkFile
+     * [optional] File to check against before unlinking
+     * 
+     * @return void
+     */
+    static public function unlink(string $fileToUnlink, $checkFile = null)
+    {
+        Tame::unlinkFile(
+            base_path($fileToUnlink), 
+            $checkFile
+        );
     }
 
     /**

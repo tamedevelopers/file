@@ -130,6 +130,9 @@ class FileStorage extends FileMethod{
         // new generated file name
         $generateName = $this->file->generate($config['generate']);
 
+        // create base directory if not exist
+        $this->createBaseDirectory();
+
         // Create parent storage folders
         $this->createParentFolder($this->folder);
 
@@ -145,7 +148,6 @@ class FileStorage extends FileMethod{
             'driver' => $this->config['driver'],
         ]);
     }
-
     
     /**
      * Get Class Associated with drivers, for selected Cloud storage

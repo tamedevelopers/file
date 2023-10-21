@@ -90,13 +90,13 @@ trait FileMagicTrait{
     /**
      * loop handler
      *
-     * @param  mixed $function
+     * @param  Closure $function
      * @return void
      */
-    private function loop(callable $function)
+    private function loop($closure)
     {
         if(is_array($this->uploads)){
-            $function($this);
+            $closure($this);
         }
     }
 

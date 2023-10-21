@@ -31,6 +31,11 @@ class ImageAutoresize {
 
                 // GdImage object
                 $gdImage = $response->createGDImage($imageSource, $upload['fullPath']);
+
+                // if not an instance of GdImage
+                if(!$gdImage instanceof \GdImage){
+                    return;
+                }
                 
                 // Get the dimensions of the source image.
                 $source_width = imagesx($gdImage);
@@ -44,13 +49,39 @@ class ImageAutoresize {
 
                 // Check if the destination image resource was created successfully
                 if ($resizedImage) {
-                    $white_color = imagecolorallocate($resizedImage, 255, 255, 255);
-                    imagefill($resizedImage, 0, 0, $white_color);
+
+                    // Get the image extension
+                    $imageExtension = pathinfo($upload['fullPath'], PATHINFO_EXTENSION);
+
+                    // Check if the image extension is 'png'
+                    if($imageExtension === 'png'){
+                        // Check if the source image has transparency
+                        $sourceHasTransparency = $this->isImageTransparent($gdImage);
+
+                        // Enable alpha blending and save alpha channel
+                        imagesavealpha($resizedImage, true);
+
+                        // If the source image doesn't have transparency, fill the resized image with the source image's background color
+                        if (!$sourceHasTransparency) {
+                            $background_color = $this->getBackgroundColor($gdImage);
+                            $background_color = imagecolorallocate($resizedImage, $background_color[0], $background_color[1], $background_color[2]);
+                            imagefill($resizedImage, 0, 0, $background_color);
+                        } else{
+                            // Fill with a transparent color (instead of white)
+                            $transparent_color = imagecolorallocatealpha($resizedImage, 0, 0, 0, 127);
+                            imagefill($resizedImage, 0, 0, $transparent_color);
+                        }
+                    }
+
+                    // Perform the image resizing operation
                     imagecopyresampled($resizedImage, $gdImage, 0, 0, 0, 0, $width, $height, $source_width, $source_height);
                 }
 
                 // save copy of image
-                $this->saveImage($resizedImage, $upload['fullPath']);
+                $this->saveImage(
+                    $resizedImage, 
+                    $upload['fullPath']
+                );
 
                 // run bucket method 
                 $this->bucket($upload);
@@ -112,41 +143,5 @@ class ImageAutoresize {
             (int) round($height)
         );
     }
-
-    /**
-     * Save an image resource to a file
-     *
-     * @param mixed $imageSource The image resource to save
-     * @param string $filePath The path to save the image
-     * 
-     * @return void
-     */
-    private function saveImage($imageSource, $filePath) 
-    {
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-        switch ($extension) {
-            case 'jpg':
-            case 'jpeg':
-                // Save as JPEG
-                @imagejpeg($imageSource, $filePath);
-                break;
-            case 'png':
-                // Save as PNG
-                @imagepng($imageSource, $filePath);
-                break;
-            case 'gif':
-                // Save as GIF
-                @imagegif($imageSource, $filePath);
-                break;
-            case 'webp':
-                // Save as WebP
-                @imagewebp($imageSource, $filePath);
-                break;
-        }
-
-        // Free up memory.
-        imagedestroy($imageSource);
-    }
-
 	
 }

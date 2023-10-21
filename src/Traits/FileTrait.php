@@ -4,39 +4,14 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Traits;
 
-use Tamedevelopers\Support\Capsule\Forge;
 use Tamedevelopers\Support\Tame;
+use Tamedevelopers\Support\Server;
+use Tamedevelopers\Support\Capsule\Forge;
 
 /**
  * @property $config
  */
 trait FileTrait{
-    
-    /**
-     * Set Base Domain Path
-     *
-     * @param  string|null $path
-     * @return $this
-     */
-    private function setDomain($domain = null)
-    {
-        $this->config['baseUrl'] = domain($domain);
-
-        return $this;
-    }
-    
-    /**
-     * Set Base Directory Path
-     *
-     * @param  string|null $path
-     * @return $this
-     */
-    private function setDirectory($path = null)
-    {
-        $this->config['baseDir'] = base_path($path);
-
-        return $this;
-    }
 
     /**
      * Global Configuration
@@ -69,14 +44,17 @@ trait FileTrait{
                 'files' => 'files',
                 'file'  => 'file',
             ];
-            
+
+            // base dirrectory name
+            $baseDirName = $config['baseDir'] ?? 'public';
+            $baseDirName = trim((string) $baseDirName, '\/');
+
             // create config
             $config = array_merge([
                 'limit'         => 1,
                 'size'          => 2097152, // 2mb
                 'mime'          => 'images', // video|audio|files|images|general_image|general_media|general_file
-                'baseUrl'       => domain(),
-                'baseDir'       => base_path('public'),
+                'baseDir'       => $baseDirName,
                 'driver'        => 'local', // local|s3
                 'structure'     => 'default', // default|year|month|day
                 'generate'      => true, // will always generate a unique() name for each uploaded file
@@ -95,10 +73,15 @@ trait FileTrait{
                     : $config['size'] ?? '2mb'
             );
 
-            // trim any leading '\/' and manually add by ourselves
-            // this enable to make sure, paths are with a leading '/'
-            $config['baseDir'] = trim((string) $config['baseDir'], '\/') . '/';
-            $config['baseUrl'] = trim((string) $config['baseUrl'], '\/') . '/';
+            // base domain path
+            $config['baseUrl'] = Server::cleanServerPath(
+                domain($config['baseDir'])
+            );
+
+            // convert base to absolute path
+            $config['baseDir'] = Server::cleanServerPath(
+                base_path($config['baseDir'])
+            );
 
             // check for valid driver type
             // only change the default driver if found

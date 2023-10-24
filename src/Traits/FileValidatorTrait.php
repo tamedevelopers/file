@@ -99,10 +99,10 @@ trait FileValidatorTrait{
             foreach($this->fileItemsData() as $key => $file){
 
                 // Mime types
-                $mimeTypes = $this->allowedMimeType()['mime'][$this->config['mime']]  ?? $this->allowedMimeType()['mime']['images'];
+                $mimeTypes = $this->allowedMimeType()['mime'][$this->config['mime']]  ?? $this->allowedMimeType()['mime']['image'];
 
                 // mimeExtensions
-                $mimeExtensions = $this->allowedMimeType()['extension'][$this->config['mime']]  ?? $this->allowedMimeType()['extension']['images'];
+                $mimeExtensions = $this->allowedMimeType()['extension'][$this->config['mime']]  ?? $this->allowedMimeType()['extension']['image'];
 
                 // if image width and height is allowed
                 $imageSizeAllowed = $this->isImageWithHeightAllowed($file->imageSize());

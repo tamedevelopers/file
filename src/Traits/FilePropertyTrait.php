@@ -79,7 +79,7 @@ trait FilePropertyTrait{
         'width'     => null,
         'height'    => null,
         'size'      => null,
-        'mime'      => 'images',
+        'mime'      => 'image',
         'structure' => null,
         'generate'  => true,
     ];

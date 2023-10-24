@@ -25,6 +25,7 @@
   * [INPUT HTML STRUCTURE](#input-html-structure)
   * [Driver](#driver)
   * [Name](#name)
+  * [BaseDir](#baseDir)
   * [Folder](#folder)
   * [Filter](#filter)
   * [Structure](#structure)
@@ -133,7 +134,7 @@ config_file(
     ],
     config: [
         'limit'         => 1,
-        'mime'          => 'images', // video|audio|files|images|general_image|general_media|general_file
+        'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
         'size'          => 2097152, // 2mb
         'baseDir'       => 'public',
         'driver'        => 'local',
@@ -185,8 +186,7 @@ $file->getClass();
 
 ### First
 - This will get the first uploaded data 
-    - You can pass and [optional] param as string `name` \| `url`
-    - Returns an array `[name, path, url]`
+    - [optional] You can pass the mode as string `name` \| `path`\|`url`
 
 ```
 ->save(function($response){
@@ -206,6 +206,7 @@ $upload->first('name);
 ### Get
 - This will get all uploaded data 
     - Returns an index array of all uploaded data, `[name, path, url]`
+    - [optional] You can pass the mode as string `name` \| `path`\|`url`
 
 ```
 ->save(function($response){
@@ -220,7 +221,7 @@ $upload = File::name('avatar')
             ->save();
 
 $upload->first();
-$upload->get();
+$upload->get('name);
 ```
 
 ### Form
@@ -299,6 +300,15 @@ File::name('avatar')
 
 ```
 File::name('html_input_name');
+```
+
+### BaseDir
+- Takes one param `string` as base directory name
+    - This will override the global configuration settings (Domain and Server Path will be set)
+
+```
+File::name('avatar')
+    ->baseDir('newBaseDirectory');
 ```
 
 ### Folder
@@ -586,17 +596,17 @@ if($file->isCompleted()){
 ```
 'video'         =>  ['.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
 'audio'         =>  ['.mp3', '.wav'],
-'files'         =>  ['.docx', '.pdf', '.txt'],
-'images'        =>  ['.jpg', '.jpeg', '.png'],
+'file'          =>  ['.docx', '.pdf', '.txt'],
+'image'         =>  ['.jpg', '.jpeg', '.png'],
 'general_file'  =>  ['.docx', '.pdf', '.txt', '.zip', '.rar', '.xlsx', '.xls'],
 'general_image' =>  ['.jpg', '.jpeg', '.png', '.webp'],
 'general_media' =>  ['.mp3', '.wav', '.mp4', '.mpeg', '.mov', '.avi', '.wmv']
 ```
 - video
 - audio
-- files
+- file
+- image
 - general_file
-- images 
 - general_image
 - general_media
 

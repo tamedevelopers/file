@@ -7,6 +7,7 @@ namespace Tamedevelopers\File;
 use Exception;
 use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
+use Tamedevelopers\Support\Server;
 use Tamedevelopers\File\ImageCompress;
 use Tamedevelopers\File\ImageWatermark;
 use Tamedevelopers\Validator\Validator;
@@ -115,7 +116,7 @@ class File extends FileMethod{
      * @param string $watermarkSource The path to the watermark image.
      * 
      * @param string $position The position of the watermark. - Default is 'bottom-right'
-     * - ['center', 'bottom-right', 'bottom-left', 'top-right', 'top-left']
+     * ['center', 'bottom-right', 'bottom-left', 'top-right', 'top-left']
      * 
      * @param  int $padding Padding in pixels (applied to all positions except 'center')
      * 
@@ -186,6 +187,30 @@ class File extends FileMethod{
     }
     
     /**
+     * Change base directory
+     *
+     * @param string $directory
+     * @return $this
+     */
+    public function baseDir($directory)
+    {
+        // clean the path given
+        $baseDirName = trim((string) $directory, '\/');
+
+        // base domain path
+        $this->config['baseUrl'] = Server::cleanServerPath(
+            domain($baseDirName)
+        );
+
+        // trim string
+        $this->config['baseDir'] = Server::cleanServerPath(
+            base_path($baseDirName)
+        );
+
+        return $this;
+    }
+    
+    /**
      * Change driver type
      *
      * @param string|null $driver
@@ -235,13 +260,12 @@ class File extends FileMethod{
     /**
      * Upload size in mb
      *
-     * @param  int|string|null $size
+     * @param  int|string $size
      * [optional] Default is (2mb)
-     * 
      * 
      * @return $this
      */
-    public function size($size = null)
+    public function size($size)
     {
         $this->config['size'] = Tame::sizeToBytes(
             !empty($size) && (int) $size >= 1024
@@ -255,10 +279,10 @@ class File extends FileMethod{
     /**
      * Upload limit
      *
-     * @param  int|string|null $limit
+     * @param  int|string $limit
      * @return $this
      */
-    public function limit($limit = null)
+    public function limit($limit)
     {
         $this->config['limit'] = self::numbericToInt($limit) ?: 1;
 
@@ -268,13 +292,13 @@ class File extends FileMethod{
     /**
      * Set width
      *
-     * @param  int|string|null $width
+     * @param  int|string $width
      * @param  bool $width - Default is `true`
      * [optional] Set to false will make size equal to or greather than
      * 
      * @return $this
      */
-    public function width($width = null, ?bool $actual = true)
+    public function width($width, ?bool $actual = true)
     {
         $this->config['width'] = [
             'size' => self::numbericToInt($width),
@@ -287,13 +311,13 @@ class File extends FileMethod{
     /**
      * Set Height
      *
-     * @param  int|string|null $height
+     * @param  int|string $height
      * @param  bool $width - Default is `true`
      * [optional] Set to false will make size equal to or greather than
      * 
      * @return $this
      */
-    public function height($height = null, ?bool $actual = true)
+    public function height($height, ?bool $actual = true)
     {
         $this->config['height'] = [
             'size' => self::numbericToInt($height),
@@ -306,10 +330,13 @@ class File extends FileMethod{
     /**
      * Set Mime Type
      *
-     * @param  string|null $mime
+     * @param  string $mime
+     * [available keys] 
+     * - video|audio|file|image|general_image|general_media|general_file
+     * 
      * @return $this
      */
-    public function mime($mime = null)
+    public function mime($mime)
     {
         $this->config['mime'] = $mime;
 
@@ -390,6 +417,7 @@ class File extends FileMethod{
      * Get First Element of Uploads
      * 
      * @param string|null $mode
+     * - [name, path, url]
      * 
      * @return array|string|null
      */
@@ -403,11 +431,19 @@ class File extends FileMethod{
     /**
      * Get all Element of Uploads
      * 
+     * @param string|null $mode
+     * - [name, path, url]
+     * 
      * @return array|null
      */
-    public function get()
+    public function get($mode = null)
     {
-        return self::getUploads($this->uploads);
+        $data = self::getUploads($this->uploads);
+        if(is_null($mode)){
+            return $data;
+        }
+
+        return array_column($data, $mode);
     }
 
     /**

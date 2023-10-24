@@ -42,7 +42,7 @@ class FileHelper extends FileMethod{
     /**
      * Get Temporary Path
      *
-     * @return void
+     * @return string
      */
     public function tmp()
     {
@@ -98,10 +98,11 @@ class FileHelper extends FileMethod{
             'height' => $imagePath[1] ?? null
         ];
     }
-    
+       
     /**
      * Generate new file
-     * 
+     *
+     * @param  bool $allow
      * @return string
      * - Generated Filename
      */

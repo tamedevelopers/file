@@ -78,7 +78,7 @@ abstract class FileMethod{
      *
      * @param  mixed $uploads
      * @param  bool $first
-     * @return void
+     * @return array
      */
     static protected function getUploads($uploads, $first = false)
     {
@@ -103,6 +103,8 @@ abstract class FileMethod{
 
             return $files;
         }
+
+        return [];
     }
     
     /**
@@ -209,7 +211,7 @@ abstract class FileMethod{
     static protected function getStructureType($mode = null)
     {
         return match ($mode) {
-            'default', 'year', 'month', 'day' => $mode,
+            'year', 'month', 'day' => $mode,
             default => 'default',
         };
     }
@@ -225,8 +227,8 @@ abstract class FileMethod{
         $mimeType = [
             'video'         =>  ['video/mp4','video/mpeg','video/quicktime','video/x-msvideo','video/x-ms-wmv'],
             'audio'         =>  ['audio/mpeg','audio/x-wav'],
-            'files'         =>  ['application/msword','application/pdf','text/plain'],
-            'images'        =>  ['image/jpeg', 'image/png', 'image/gif'],
+            'file'          =>  ['application/msword','application/pdf','text/plain'],
+            'image'         =>  ['image/jpeg', 'image/png', 'image/gif'],
             'general_image' =>  ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon'],
             'general_media' =>  ['audio/mpeg','audio/x-wav', 'video/mp4','video/mpeg','video/quicktime','video/x-msvideo','video/x-ms-wmv'],
             'general_file'  =>  [
@@ -241,8 +243,8 @@ abstract class FileMethod{
         $extensionType = [
             'video'         =>  ['.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
             'audio'         =>  ['.mp3', '.wav'],
-            'files'         =>  ['.docx', '.pdf', '.txt'],
-            'images'        =>  ['.jpg', '.jpeg', '.png', '.gif'],
+            'file'          =>  ['.docx', '.pdf', '.txt'],
+            'image'         =>  ['.jpg', '.jpeg', '.png', '.gif'],
             'general_image' =>  ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico'],
             'general_media' =>  ['.mp3', '.wav', '.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
             'general_file'  =>  ['.docx', '.pdf', '.txt', '.zip', '.rar', '.xlsx', '.xls'],

@@ -53,7 +53,7 @@ trait FileTrait{
             $config = array_merge([
                 'limit'         => 1,
                 'size'          => 2097152, // 2mb
-                'mime'          => 'images', // video|audio|files|images|general_image|general_media|general_file
+                'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
                 'baseDir'       => $baseDirName,
                 'driver'        => 'local', // local|s3
                 'structure'     => 'default', // default|year|month|day

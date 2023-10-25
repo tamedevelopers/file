@@ -198,10 +198,10 @@ $file->getClass();
 
 - `or`
 ```
-$upload = File::name('avatar')->save();
+$upload = File::name('avatar')
+                ->save();
 
 $upload->first('url);
-$upload->first('name);
 ```
 
 ### Get
@@ -221,7 +221,6 @@ $upload->first('name);
 $upload = File::name('avatar')
             ->save();
 
-$upload->first();
 $upload->get('name);
 ```
 
@@ -322,7 +321,6 @@ File::name('avatar')
 
 ### Folder
 - Takes one param `string` as `folder_path` to save file
-    - Remember the system already have your `baseDirectory`
 
 ```
 File::name('avatar')
@@ -361,9 +359,9 @@ File::name('avatar')
 | Key       |   Description                                                         |
 |-----------|-----------------------------------------------------------------------|
 | default   |   Files will be uploaded in defaut folder path                        |
-| year      |   Files will be uploaded in `default/year` path: `folder/2023`        |
-| month     |   Files will be uploaded in `default/year` path: `folder/2023/02`     |
-| day       |   Files will be uploaded in `default/year` path: `folder/2023/02/30`  |
+| year      |   Files will be uploaded in `default/year` path: `folder/yyyy`        |
+| month     |   Files will be uploaded in `default/year` path: `folder/yyyy/mm`     |
+| day       |   Files will be uploaded in `default/year` path: `folder/yyyy/mm/dd`  |
 
 
 1. Default

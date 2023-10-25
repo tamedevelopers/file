@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Traits;
 
+use Tamedevelopers\Support\Tame;
 use Tamedevelopers\Support\Time;
+use Tamedevelopers\Support\Server;
 
 
 /**
@@ -30,6 +32,9 @@ trait FileStorageTrait {
         // Creating our folder structure
         $folder = $this->createTimeBaseFolder($uploadDirectory);
 
+        // if directory is empty
+        $uploadDirectory = empty($uploadDirectory) ? "" : "{$uploadDirectory}/";
+
         switch ($structure) 
         {
             case 'year':
@@ -45,7 +50,7 @@ trait FileStorageTrait {
                 $path = str_replace($this->config['baseDir'], '', $fullPath);
                 break;
             default:
-                $fullPath   = "{$this->config['baseDir']}{$uploadDirectory}/{$newGenFileName}";
+                $fullPath   = "{$this->config['baseDir']}{$uploadDirectory}{$newGenFileName}";
                 $path = str_replace($this->config['baseDir'], '', $fullPath);
                 break;
         }
@@ -82,28 +87,30 @@ trait FileStorageTrait {
      */
     protected function createParentFolder($uploadDirectory)
     {
-        // explode path using `/`
-        // this way we're able tpo separate all [dir] and [subdir]
-        $directorySegments = explode('/', $uploadDirectory);
-
-        $segmentPath = "";
-
-        // loop through each directory path
-        foreach($directorySegments as $key => $segment){
-            
-            $separator = $key === 0 ? '' : '/';
-            $segmentPath .= $separator . $segment;
-
-            // create absolute path
-            $fullPath = "{$this->config['baseDir']}{$segmentPath}";
-
-            // Create folder if not exist
-            if(!is_dir($fullPath))
-            {
-                @mkdir($fullPath, 0777);
-
-                // Create index file
-                $this->createDefaultRestrictedFiles($fullPath);
+        if(!empty($uploadDirectory)){
+            // explode path using `/`
+            // this way we're able tpo separate all [dir] and [subdir]
+            $directorySegments = explode('/', $uploadDirectory);
+    
+            $segmentPath = "";
+    
+            // loop through each directory path
+            foreach($directorySegments as $key => $segment){
+                
+                $separator = $key === 0 ? '' : '/';
+                $segmentPath .= $separator . $segment;
+    
+                // create absolute path
+                $fullPath = "{$this->config['baseDir']}{$segmentPath}";
+    
+                // Create folder if not exist
+                if(!is_dir($fullPath))
+                {
+                    @mkdir($fullPath, 0777);
+    
+                    // Create index file
+                    $this->createDefaultRestrictedFiles($fullPath);
+                }
             }
         }
     }
@@ -164,6 +171,9 @@ trait FileStorageTrait {
     {
         $now = strtotime("now");
 
+        // if directory is empty
+        $uploadDirectory = empty($uploadDirectory) ? "" : "{$uploadDirectory}/";
+
         $time = [
             "year"  => Time::timestamp($now, 'Y'),
             "month" => Time::timestamp($now, 'n'),
@@ -172,9 +182,9 @@ trait FileStorageTrait {
         ];
 
         return [
-            'year'  => "{$this->config['baseDir']}{$uploadDirectory}/{$time['year']}",
-            'month' => "{$this->config['baseDir']}{$uploadDirectory}/{$time['year']}/{$time['month']}",
-            'day'   => "{$this->config['baseDir']}{$uploadDirectory}/{$time['year']}/{$time['month']}/{$time['day']}", 
+            'year'  => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}",
+            'month' => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}/{$time['month']}",
+            'day'   => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}/{$time['month']}/{$time['day']}", 
             'now'   => $time['now']
         ];
     }
@@ -187,23 +197,72 @@ trait FileStorageTrait {
      */
     protected function createDefaultRestrictedFiles($path)
     {
-        //Create index file
-        if (!file_exists("{$path}/index.html") ) {
-            @$fsource = fopen("{$path}/index.html", 'w+');
-            if(is_resource($fsource)){
-                fwrite($fsource, "Restricted Access");
-                fclose($fsource);
-            }
-        }
+        $dummyPath = $this->pathToDummy($path);
+        
+        // create for htaccess 
+        $this->createHtaccess($dummyPath);
+        
+        // create for html 
+        // $this->createHtml($dummyPath);
+    }
+    
+    /**
+     * Create HTaccess File
+     *
+     * @param  mixed $dummyPath
+     * @return void
+     */
+    private function createHtaccess($dummyPath)
+    {
+        // create for htaccess 
+        if(!Tame::exists($dummyPath['htaccess']['path'])){
+            // Read the contents of the dummy file
+            $dummyContent = file_get_contents($dummyPath['htaccess']['dummy']);
 
-        //Create apache file -- .htaccess
-        if (!file_exists("{$path}/.htaccess") ) {
-            @$fsource = fopen("{$path}/.htaccess", 'w+');
-            if(is_resource($fsource)){
-                fwrite($fsource, "");
-                fclose($fsource);
-            }
+            // Write the contents to the new file
+            file_put_contents($dummyPath['htaccess']['path'], $dummyContent);
         }
+    }
+    
+    /**
+     * Create HTML File
+     *
+     * @param  mixed $dummyPath
+     * @return void
+     */
+    private function createHtml($dummyPath)
+    {
+        // create for html 
+        if(!Tame::exists($dummyPath['html']['path'])){
+            // Read the contents of the dummy file
+            $dummyContent = file_get_contents($dummyPath['html']['dummy']);
+
+            // Write the contents to the new file
+            file_put_contents($dummyPath['html']['path'], $dummyContent);
+        }
+    }
+    
+    /**
+     * Path to dummy files
+     * @param  mixed $path
+     * @return array
+     */
+    private function pathToDummy($path)
+    {
+        $packageDummyPath = Server::cleanServerPath(
+            dirname(__DIR__) . "/Dummy/"
+        );
+        
+        return [
+            'htaccess'  => [
+                'path'  => "{$path}/.htaccess",
+                'dummy' => "{$packageDummyPath}dummyHtaccess.dum",
+            ],
+            'html'      => [
+                'path'  => "{$path}/index.html",
+                'dummy' => "{$packageDummyPath}dummyHtml.dum",
+            ]
+        ];
     }
 
 }

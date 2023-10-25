@@ -100,7 +100,7 @@ class File extends FileMethod{
 
         if($this->success){
             if(empty($this->folder)){
-                $this->folder = 'images';
+                $this->folder = '';
             }
 
             $this->proceedToSave()
@@ -256,7 +256,7 @@ class File extends FileMethod{
     }
     
     /**
-     * Set Folder Structure Creation
+     * Set Structure Creation
      *
      * @param string $structure
      * - Keys [default, year, month, day]

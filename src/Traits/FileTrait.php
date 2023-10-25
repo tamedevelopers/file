@@ -24,7 +24,7 @@ trait FileTrait{
     public function globalConfig($message = [], $config = [], $class = [])
     {
         // define constant to hold global error handler
-        if(!defined('')){
+        if(!defined('TAME_FILE_CONFIG')){
 
             // create message
             $message = $message + [
@@ -97,10 +97,8 @@ trait FileTrait{
                 'class'   => $class,
             ];
 
-            if(!defined('TAME_FILE_CONFIG')){
-                define('TAME_FILE_CONFIG', $default);
-            }
-
+            // define global config
+            define('TAME_FILE_CONFIG', $default);
         }
     }
 

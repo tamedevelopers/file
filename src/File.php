@@ -211,12 +211,25 @@ class File extends FileMethod{
     }
     
     /**
-     * Change driver type
+     * Allow generation of new name for uploaded files
      *
-     * @param string|null $driver
+     * @param bool $allow
      * @return $this
      */
-    public function driver($driver = null)
+    public function generate(?bool $allow = true)
+    {
+        $this->config['generate'] = $allow;
+
+        return $this;
+    }
+    
+    /**
+     * Change driver type
+     *
+     * @param string $driver
+     * @return $this
+     */
+    public function driver($driver)
     {
         // trim string
         $driver = Str::lower($driver);

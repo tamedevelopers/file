@@ -36,6 +36,9 @@ trait FileValidatorTrait{
         // file data
         $fileItems = $this->fileItemsData();
 
+        // change the correct uploaded message
+        $this->data["message"] = $this->translation('200');
+
         // check if file item is true 
         // and count is more than 0
         if(is_array($fileItems) && count($fileItems) > 0){
@@ -93,7 +96,7 @@ trait FileValidatorTrait{
         } 
         
         // begin file validation
-        else{
+        else {
 
             $validationAttempt = true;
             foreach($this->fileItemsData() as $key => $file){
@@ -188,7 +191,7 @@ trait FileValidatorTrait{
             if($validationAttempt){
                 $this->data = [
                     "status"    => 200,
-                    "message"   => $this->translation('200'),
+                    "message"   => "File validated successfully:",
                 ];
                 $this->success = true;
             }
@@ -257,7 +260,7 @@ trait FileValidatorTrait{
 
         // Merge config only when custom setting is not empty
         foreach ($this->config as $key => $value) {
-            if (!empty($value)) {
+            if (!empty($value) || is_bool($value)) {
                 $config[$key] = $value;
             }
         }

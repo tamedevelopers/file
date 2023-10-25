@@ -26,6 +26,7 @@
   * [Driver](#driver)
   * [Name](#name)
   * [BaseDir](#baseDir)
+  * [Generate](#generate)
   * [Folder](#folder)
   * [Filter](#filter)
   * [Structure](#structure)
@@ -309,6 +310,14 @@ File::name('html_input_name');
 ```
 File::name('avatar')
     ->baseDir('newBaseDirectory');
+```
+
+### Generate
+- Takes one param `bool`
+
+```
+File::name('avatar')
+        ->generate(false);
 ```
 
 ### Folder

@@ -78,7 +78,7 @@ abstract class FileMethod{
      *
      * @param  mixed $uploads
      * @param  bool $first
-     * @return array
+     * @return array|null
      */
     static protected function getUploads($uploads, $first = false)
     {
@@ -103,8 +103,6 @@ abstract class FileMethod{
 
             return $files;
         }
-
-        return [];
     }
     
     /**

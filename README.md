@@ -13,6 +13,7 @@
 * [Instantiate](#instantiate)
 * [Amazon Aws S3](#amazon-aws-s3)
 * [Global Config](#global-config)
+* [INPUT HTML STRUCTURE](#input-html-structure)
 * [Response Data](#response-data)
     * [Get Message](#get-message)
     * [Get Status](#get-status)
@@ -22,7 +23,6 @@
     * [Form](#form)
     * [Unlink](#unlink)
 * [Usage](#usage)
-  * [INPUT HTML STRUCTURE](#input-html-structure)
   * [Name](#name)
   * [Driver](#driver)
   * [BaseDir](#baseDir)
@@ -158,6 +158,17 @@ config_file(
 );
 ```
 
+### INPUT HTML STRUCTURE
+
+```
+<input type="file" name="avatar">
+```
+
+- or -- `For Multiple Data`
+```
+<input type="file" name="avatar[]" multiple>
+```
+
 ## Response Data
 - How to retrieve data
 
@@ -252,17 +263,6 @@ $upload->get('name);
 ```
 
 ## Usage
-
-### INPUT HTML STRUCTURE
-
-```
-<input type="file" name="avatar">
-```
-
-- or -- `For Multiple Data`
-```
-<input type="file" name="avatar[]" multiple>
-```
 
 ### Name
 - Takes one param `string` as input name

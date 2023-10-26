@@ -23,8 +23,8 @@
     * [Unlink](#unlink)
 * [Usage](#usage)
   * [INPUT HTML STRUCTURE](#input-html-structure)
-  * [Driver](#driver)
   * [Name](#name)
+  * [Driver](#driver)
   * [BaseDir](#baseDir)
   * [Generate](#generate)
   * [Folder](#folder)
@@ -69,7 +69,7 @@ composer require tamedevelopers/file
 ```
 require_once __DIR__ . '/vendor/autoload.php';
 
-use \Tamedevelopers\File\File;
+use Tamedevelopers\File\File;
 
 $file = new File();
 ```
@@ -264,6 +264,15 @@ $upload->get('name);
 <input type="file" name="avatar[]" multiple>
 ```
 
+### Name
+- Takes one param `string` as input name
+    - Static method by default
+
+```
+File::name('html_input_name');
+```
+
+
 ### Driver
 - More drivers are to be added in the future
     - By default driver is set to `local`
@@ -292,14 +301,6 @@ Env::load();
 
 File::name('avatar')
     ->driver('s3');
-```
-
-### Name
-- Takes one param `string` as input name
-    - Static method by default
-
-```
-File::name('html_input_name');
 ```
 
 ### BaseDir

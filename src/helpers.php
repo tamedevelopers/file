@@ -23,8 +23,13 @@ if (! function_exists('config_file')) {
      * Global Configuration
      *
      * @param  array $message
+     * - [401|402|403|404|405|405x|200|kb|mb|gb|and|width|height|files|file]
+     * 
      * @param  array $config
+     * - [limit|size|mime|baseDir|driver|structure|generate]
+     * 
      * @param  array $class
+     * - [error|success]
      *  
      * @return void
      */

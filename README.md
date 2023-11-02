@@ -114,7 +114,7 @@ $file = TameFile();
 | config        |  Assoc `array`    | Create all needed config data     |
 | class         |  Assoc `array`    | Create error and success class    |
 
-```config
+```config 
 config_file(
     message: [
         '401'   => 'Select file to upload',

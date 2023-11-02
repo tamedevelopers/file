@@ -82,7 +82,9 @@ class File extends FileMethod{
         $this->proceedToValidate();
 
         if(!$this->success){
-            $this->callback($closure);
+            if(in_array($this->getStatus(), [401, 402, 403, 404, 405])){
+                $this->callback($closure);
+            }
         }
 
         return $this;
@@ -259,7 +261,7 @@ class File extends FileMethod{
      * Set Structure Creation
      *
      * @param string $structure
-     * - Keys [default, year, month, day]
+     * - [default, year, month, day]
      * 
      * @return $this
      */
@@ -274,7 +276,7 @@ class File extends FileMethod{
      * Upload size in mb
      *
      * @param  int|string $size
-     * [optional] Default is (2mb)
+     * - [optional] Default is (2mb)
      * 
      * @return $this
      */
@@ -306,8 +308,8 @@ class File extends FileMethod{
      * Set width
      *
      * @param  int|string $width
-     * @param  bool $width - Default is `true`
-     * [optional] Set to false will make size equal to or greather than
+     * @param  bool $actual
+     * - [optional] Set to false will make size equal to or greather than
      * 
      * @return $this
      */
@@ -325,8 +327,8 @@ class File extends FileMethod{
      * Set Height
      *
      * @param  int|string $height
-     * @param  bool $width - Default is `true`
-     * [optional] Set to false will make size equal to or greather than
+     * @param  bool $actual
+     * - [optional] Set to false will make size equal to or greather than
      * 
      * @return $this
      */
@@ -344,8 +346,7 @@ class File extends FileMethod{
      * Set Mime Type
      *
      * @param  string $mime
-     * [available keys] 
-     * - video|audio|file|image|general_image|general_media|general_file
+     * - [video|audio|file|image|general_image|general_media|general_file] 
      * 
      * @return $this
      */
@@ -474,18 +475,18 @@ class File extends FileMethod{
     /**
      * Unlink File from Server
      *
-     * @param string $fileToUnlink
-     * @param string|null $checkFile
-     * [optional] File to check against before unlinking
+     * @param string $pathToFile
+     * - [base path will be automatically added]
+     * 
+     * @param string|null $fileName
+     * - [optional] file name. <avatar.png> 
+     * - File to check against before unlinking
      * 
      * @return void
      */
-    static public function unlink(string $fileToUnlink, $checkFile = null)
+    static public function unlink(string $pathToFile, $fileName = null)
     {
-        Tame::unlinkFile(
-            base_path($fileToUnlink), 
-            $checkFile
-        );
+        Tame::unlink($pathToFile, $fileName);
     }
 
     /**

@@ -20,12 +20,13 @@ config_file(
 // [optional] closure/callable function, 
 // When using `save()` and `validate()` method.
 $upload = File::name('avatar')
+                // ->folder('upload/transaction')
                 ->size('500kb')
                 ->save(function($response){
 
                     $response
                         ->watermark('tests/watermark.png', 'bottom-right')
-                        ->resize(690, 540)
+                        // ->resize(690, 540)
                         ->compress();
                 });
     

@@ -1,6 +1,6 @@
 <?php 
 
-use Tamedevelopers\File\File;
+use Tamedevelopers\File\File; 
 
 
 

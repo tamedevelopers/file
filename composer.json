@@ -16,8 +16,8 @@
     ],
     "require": {
         "php": ">=8.0",
-        "tamedevelopers/support": "^2.0.1",
-        "tamedevelopers/validator": "^4.2.5"
+        "tamedevelopers/support": "*",
+        "tamedevelopers/validator": "*"
     },
     "suggest": {
         "aws/aws-sdk-php": "Required to use Amazon `s3` composer require aws/aws-sdk-php (^3.282.0)."

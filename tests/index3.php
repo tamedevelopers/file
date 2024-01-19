@@ -41,7 +41,7 @@ File::name('avatar')
                     <div class="form-group">
                         <label for="upload">Image</label>
                         <input type="file" class="form-control-file" id="upload" 
-                                name="avatar[]" multiple>
+                                name="avatar" multiple>
                     </div>
                 </div>
 

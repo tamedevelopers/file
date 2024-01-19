@@ -1,7 +1,6 @@
 <?php
 
-include_once "../src/ultimateUploader.php";
-
+include_once __DIR__  . "/../vendor/autoload.php";
 
 // Configure the file uploader using global function helper
 config_file(
@@ -24,7 +23,7 @@ config_file(
     ],
     config: [
         'limit'         => 1,
-        'mime'          => 'images', // video|audio|files|images|general_image|general_media|general_file
+        'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
         'size'          => 2097152, // 2mb
         'baseDir'       => 'public',
         'driver'        => 'local',

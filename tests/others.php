@@ -24,7 +24,7 @@ if(File::has('avatar')){
 
     // $file = File::name('avatar')
     //             ->limit(3)
-    //             ->mime('files')
+    //             ->mime('file')
     //             ->filter([401, 403, 500])
     //             ->folder('public/files')
     //             ->driver('s3')

@@ -7,11 +7,11 @@ use Tamedevelopers\File\File;
 // default is images
 
 File::name('avatar')
-    ->mime('images');
+    ->mime('image');
 
 
 File::name('document')
-    ->mime('files');
+    ->mime('file');
 
 
 

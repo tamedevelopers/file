@@ -46,7 +46,7 @@ class FileHelper extends FileMethod{
      */
     public function tmp()
     {
-        return $this->data['tmp_name'];
+        return $this->data['tmp_name'] ?? 'null';
     }
     
     /**
@@ -68,7 +68,7 @@ class FileHelper extends FileMethod{
     public function mime()
     {
         return Str::lower(@mime_content_type(
-            $this->data['tmp_name']
+            $this->tmp()
         ));
     }
 
@@ -91,7 +91,7 @@ class FileHelper extends FileMethod{
     public function imageSize()
     {
         // get image attributes
-        $imagePath = @getimagesize($this->data['tmp_name']);
+        $imagePath = @getimagesize($this->tmp());
 
         return [
             'width'  => $imagePath[0] ?? null,

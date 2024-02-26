@@ -40,7 +40,8 @@
   * [Resize](#resize)
   * [WaterMark](#watermark)
   * [Compress](#compress)
-  * [Get Image Size](#get-image-size)
+  * [Get External Image Size](#get-external-image-size)
+  * [Get Uploaded Image Size](#get-uploaded-image-size)
   * [Get Mime Type](#get-mime-type)
   * [Not Empty](#not-empty)
   * [Is Empty](#is-empty)
@@ -540,12 +541,25 @@ File::name('avatar')
     });
 ```
 
-### Get Image Size
+### Get External Image Size
 - Takes one param as `string` 
     - Return an `array` \| `null`
 
 ```
 File::getImageSize('full_source_path')
+
+[
+  ["height"]    => int(4209)
+  ["width"]     => int(3368)
+]
+```
+
+### Get Uploaded Image Size
+- Takes one param as `string` 
+    - Return an `array` \| `null`
+
+```
+File::imageSize('name_of_uploaded_file')
 
 [
   ["height"]    => int(4209)

@@ -137,6 +137,31 @@ trait FileTrait{
 
         return $this;
     }
+
+    /**
+     * Uploaded Image Size
+     *
+     * @param  mixed $name
+     * 
+     * @return array
+     * [width, height]
+     */
+    public function imageSize(string $name = null)
+    {
+        $instance = $this->name($name);
+
+        // loop through to get temporary uploaded file data
+        if(!empty($instance->files[$name]) && is_array($instance->files[$name])){
+            foreach($instance->files[$name] as $item){
+                return $item->imageSize();
+            }
+        }
+
+        return [
+            'width'  => null, 
+            'height' => null
+        ];
+    }
     
     /**
      * Get Image Attributes

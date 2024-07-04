@@ -359,11 +359,14 @@ class File extends FileMethod{
     
     /**
      * Get Error Message
-     *
+     * @param  string $message
+     * 
      * @return string
      */
-    public function getMessage()
+    public function getMessage($message = null)
     {
+        $this->data['message'] = empty($message) ? $this->data['message'] : $message;
+
         return $this->data['message'];
     }
     

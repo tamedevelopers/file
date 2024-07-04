@@ -179,6 +179,8 @@ config_file(
 $file = File::name('html_input_name');
 
 $file->getMessage();
+
+$file->getMessage('new Message');
 ```
 
 ### Get Status

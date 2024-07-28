@@ -52,12 +52,12 @@ trait FileTrait{
             // create config
             $config = array_merge([
                 'limit'         => 1,
-                'size'          => 2097152, // 2mb
-                'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
+                'size'          => '2mb', 
+                'mime'          => 'image',
                 'baseDir'       => $baseDirName,
-                'driver'        => 'local', // local|s3
-                'structure'     => 'default', // default|year|month|day
-                'generate'      => true, // will always generate a unique() name for each uploaded file
+                'driver'        => 'local',
+                'structure'     => 'default',
+                'generate'      => true,
             ], $config);
 
             // create class

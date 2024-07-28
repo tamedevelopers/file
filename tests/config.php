@@ -23,7 +23,7 @@ config_file(
     ],
     config: [
         'limit'         => 1,
-        'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
+        'mime'          => 'image', // video|audio|file|image|zip|pdf|xls|doc|general_image|general_media|general_file
         'size'          => 2097152, // 2mb
         'baseDir'       => 'public',
         'driver'        => 'local',

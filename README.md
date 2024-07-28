@@ -136,8 +136,8 @@ config_file(
     ],
     config: [
         'limit'         => 1,
-        'mime'          => 'image', // video|audio|file|image|general_image|general_media|general_file
-        'size'          => 2097152, // 2mb
+        'mime'          => 'image', // video|audio|file|image|zip|pdf|xls|doc|general_image|general_media|general_file
+        'size'          => '2mb',
         'baseDir'       => 'public',
         'driver'        => 'local',
         'structure'     => 'default', // default|year|month|day
@@ -404,21 +404,11 @@ File::name('avatar')
 
 ### Mime
 - Takes one param `string` as mime type
-    - The package already create list of mim types
-
-| key               |   Description                                                                                                     |
-|-------------------|-------------------------------------------------------------------------------------------------------------------|
-| video             |   `['video/mp4','video/mpeg','video/quicktime','video/x-msvideo','video/x-ms-wmv']`                               |
-| audio             |   `['audio/mpeg','audio/x-wav']   `                                                                               |
-| files             |   `['application/msword','application/pdf','text/plain']   `                                                      |
-| images            |   `['image/jpeg', 'image/png', 'image/gif']`                                                                      |
-| general_image     |   `['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon']`                            |
-| general_media     |   `['audio/mpeg','audio/x-wav', 'video/mp4','video/mpeg','video/quicktime','video/x-msvideo','video/x-ms-wmv']`   |
-| general_file      |   `['application/msword','application/pdf','text/plain','application/zip', 'application/x-zip-compressed', 'multipart/x-zip','application/x-zip-compressed' 'application/x-rar-compressed', 'application/octet-stream', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']`|
+    - Goto `Mime Types` to see list
 
 ```
 File::name('avatar')
-    ->mime('images');
+    ->mime('image');
 ```
 
 ### Width
@@ -617,22 +607,26 @@ if($file->isCompleted()){
 ```
 
 ### Mime Types
+
+| Key               |   Description                                         |
+|-------------------|-------------------------------------------------------|
+| video             |   `.mp4\|.mpeg\|.mov\|.avi\|.wmv`                     |
+| audio             |   `.mp3\|.wav`                                        |
+| file              |   `.docx\|.doc\|.pdf\|.txt`                           |
+| image             |   `.jpg\|.jpeg\|.png\|.gif`                           |
+| zip               |   `.zip\|.rar`                                        |
+| pdf               |   `.pdf`                                              |
+| xls               |   `.xlsx\|.xls`                                       |
+| doc               |   `.docx\|.doc\|.txt`                                 |
+| general_image     |   `.jpg\|.jpeg\|.png\|.gif\|.webp\|.ico`              |
+| general_media     |   `.mp3\|.wav\|.mp4\|.mpeg\|.mov\|.avi\|.wmv`         |
+| general_file      |   `.docx\|.doc\|.pdf\|.txt\|.zip\|.rar\|.xlsx\|.xls`  |
+
 ```
-'video'         =>  ['.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
-'audio'         =>  ['.mp3', '.wav'],
-'file'          =>  ['.docx', '.pdf', '.txt'],
-'image'         =>  ['.jpg', '.jpeg', '.png'],
-'general_file'  =>  ['.docx', '.pdf', '.txt', '.zip', '.rar', '.xlsx', '.xls'],
-'general_image' =>  ['.jpg', '.jpeg', '.png', '.webp'],
-'general_media' =>  ['.mp3', '.wav', '.mp4', '.mpeg', '.mov', '.avi', '.wmv']
+File::name('invoiceDescription')
+    ->mime('zip')
+    ->save();
 ```
-- video
-- audio
-- file
-- image
-- general_file
-- general_image
-- general_media
 
 
 ## Useful Links

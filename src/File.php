@@ -346,7 +346,7 @@ class File extends FileMethod{
      * Set Mime Type
      *
      * @param  string $mime
-     * - [video|audio|file|image|general_image|general_media|general_file] 
+     * - [video|audio|file|image|zip|pdf|xls|doc|general_image|general_media|general_file] 
      * 
      * @return $this
      */

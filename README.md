@@ -624,7 +624,7 @@ if($file->isCompleted()){
 
 ```
 File::name('invoiceDescription')
-    ->mime('zip')
+    ->mime('zip') 
     ->save();
 ```
 

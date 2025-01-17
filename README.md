@@ -1,11 +1,10 @@
 # File Upload
 
-[![Total Downloads](https://poser.pugx.org/tamedeveloper/file/downloads)](https://packagist.org/packages/tamedeveloper/file)
-[![Latest Stable Version](https://poser.pugx.org/tamedeveloper/file/version.png)](https://packagist.org/packages/tamedeveloper/file)
-[![License](https://poser.pugx.org/tamedeveloper/file/license)](https://packagist.org/packages/tamedeveloper/file)
+[![Total Downloads](https://poser.pugx.org/tamedevelopers/file/downloads)](https://packagist.org/packages/tamedevelopers/file)
+[![Latest Stable Version](https://poser.pugx.org/tamedevelopers/file/version.png)](https://packagist.org/packages/tamedevelopers/file)
+[![License](https://poser.pugx.org/tamedevelopers/file/license)](https://packagist.org/packages/tamedevelopers/file)
 [![Build Status](https://github.com/tamedevelopers/file/actions/workflows/php.yml/badge.svg)](https://github.com/tamedevelopers/file/actions)
-[![Code Coverage](https://codecov.io/gh/tamedeveloper/file/branch/2.2.x/graph/badge.svg)](https://codecov.io/gh/tamedeveloper/file/branch/3.2.2.x)
-
+[![Code Coverage](https://codecov.io/github/tamedevelopers/file/graph/badge.svg?token=GGW103RD7K)](https://codecov.io/github/tamedevelopers/file)
 ## Documentation
 
 * [Requirements](#requirements)

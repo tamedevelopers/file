@@ -17,11 +17,15 @@ trait CommonTrait{
     private function saveImage($gdImage, $filePath, $quality = 50)
     {
         $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+        $quality = (int) $quality;
+        $quality = $quality < 50 || $quality > 100 ? 50 : $quality;
+
         switch ($extension) {
             case 'jpg':
             case 'jpeg':
                 // Save as JPEG
-                @imagejpeg($gdImage, $filePath, 50);
+                @imagejpeg($gdImage, $filePath, $quality);
                 break;
             case 'png':
                 // Save as PNG

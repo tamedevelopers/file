@@ -90,7 +90,7 @@ trait FileMagicTrait{
     /**
      * loop handler
      *
-     * @param  Closure $function
+     * @param  Closure $closure
      * @return void
      */
     private function loop($closure)

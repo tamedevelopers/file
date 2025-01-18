@@ -181,10 +181,12 @@ trait FileStorageTrait {
             "now"   => $now
         ];
 
+        $year = "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}";
+
         return [
-            'year'  => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}",
-            'month' => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}/{$time['month']}",
-            'day'   => "{$this->config['baseDir']}{$uploadDirectory}{$time['year']}/{$time['month']}/{$time['day']}", 
+            'year'  => "{$year}",
+            'month' => "{$year}/{$time['month']}",
+            'day'   => "{$year}/{$time['month']}/{$time['day']}", 
             'now'   => $time['now']
         ];
     }

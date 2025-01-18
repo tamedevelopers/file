@@ -15,9 +15,10 @@ File::name('avatar')
     ->save(function($response){
 
         $response
-            ->watermark('test/watermark.png', 'center', 20)
-            ->resize(100, 200)
-            ->compress();
+            ->resize(400, 400)
+            ->watermark('tests/watermark.png', 'top right', 20)
+            ->compress()
+            ;
     });
 
 ?>

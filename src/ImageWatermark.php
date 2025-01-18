@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File;
 
+use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\Traits\CommonTrait;
 use Tamedevelopers\File\Traits\FileMagicTrait;
@@ -29,6 +30,10 @@ class ImageWatermark {
     {
         $this->loop(function($response) use($watermarkSource, $position, $padding) {
             foreach($response->uploads as $upload){
+
+                // correctly form position
+                $position = Str::trim($position);
+                $position = Str::replace(' ', '-', $position);
 
                 // resource
                 $imageSource = $this->getImageResource($upload);

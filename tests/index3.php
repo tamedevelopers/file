@@ -9,17 +9,38 @@ include_once __DIR__  . "/../vendor/autoload.php";
 
 // Env::loadOrFail();
 
-File::name('avatar')
-    ->folder('upload')
-    ->validate()
-    ->save(function($response){
+config_file(
+    config: [
+        'size' => '3mb',
+        'baseDir' => '/' // root directory
+    ],
+    class: [
+        'error'   => 'background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px',
+        'success' => 'background: #c3f9c3; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px',
+    ]
+);
 
-        $response
-            ->resize(400, 400)
-            ->watermark('tests/watermark.png', 'top right', 20)
-            ->compress()
-            ;
-    });
+$upload = File::name('avatar')
+            ->folder('upload')
+            ->generate(false)
+            ->size('10.5mb') // override global settings
+            ->mime('image')
+            ->validate()
+            ->save(function($response){
+
+                // dd(
+                //     $response->getConfig(),
+                //     $response->getError(),
+                //     $response->get(),
+                //     tasset("public/{$response->first('path')}", true),
+                // );
+
+                $response
+                ->watermark('tests/watermark.png', 'top right', 20)
+                    ->resize(400, 400)
+                    ->compress()
+                    ;
+            });
 
 ?>
 
@@ -36,13 +57,25 @@ File::name('avatar')
         <form method="post" enctype="multipart/form-data">
             
                 <h3 class="valign-wrapper prod_hding_main mb-3">Upload file</h3>
+
+                <div style="<?= $upload->getClass(); ?>">
+
+                    <?php if($upload->hasError()) {?>
+                        <?= $upload->getMessage(); ?>
+                    <?php } elseif($upload->isCompleted())  {?>
+                        <a href="<?= $upload->first('url'); ?>" target="_blank">
+                            Preview Data
+                        </a>
+                    <?php } ?>
+                    
+                </div>
                 
                 <!--file upload-->
                 <div class="col-sm-12 mt-3">
                     <div class="form-group">
                         <label for="upload">Image</label>
                         <input type="file" class="form-control-file" id="upload" 
-                                name="avatar" multiple>
+                                name="avatar[]" multiple>
                     </div>
                 </div>
 

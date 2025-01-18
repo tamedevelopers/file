@@ -119,6 +119,7 @@ trait FileValidatorTrait{
                         // convert size to btyes
                         $byteToUnit = Tame::byteToUnit(
                             bytes: $this->config['size'],
+                            format: true,
                             kb: $this->translation('kb'),
                             mb: $this->translation('mb'),
                             gb: $this->translation('gb'),

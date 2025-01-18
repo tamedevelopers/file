@@ -191,7 +191,7 @@ abstract class FileMethod{
      * @param  mixed $value
      * @return mixed
      */
-    static protected function numbericToInt($value = null)
+    static protected function numericToInt($value = null)
     {
         if(is_numeric($value)){
             $value = (int) trim((string) $value);

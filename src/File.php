@@ -299,7 +299,7 @@ class File extends FileMethod{
      */
     public function limit($limit)
     {
-        $this->config['limit'] = self::numbericToInt($limit) ?: 1;
+        $this->config['limit'] = self::numericToInt($limit) ?: 1;
 
         return $this;
     }
@@ -316,7 +316,7 @@ class File extends FileMethod{
     public function width($width, ?bool $actual = true)
     {
         $this->config['width'] = [
-            'size' => self::numbericToInt($width),
+            'size' => self::numericToInt($width),
             'actual' => $actual
         ];
 
@@ -335,7 +335,7 @@ class File extends FileMethod{
     public function height($height, ?bool $actual = true)
     {
         $this->config['height'] = [
-            'size' => self::numbericToInt($height),
+            'size' => self::numericToInt($height),
             'actual' => $actual
         ];
 
@@ -479,17 +479,17 @@ class File extends FileMethod{
      * Unlink File from Server
      *
      * @param string $pathToFile
-     * - [base path will be automatically added]
+     * - [full path to file is required]
      * 
-     * @param string|null $fileName
+     * @param string|null $restrictedfileName
      * - [optional] file name. <avatar.png> 
      * - File to check against before unlinking
      * 
      * @return void
      */
-    static public function unlink(string $pathToFile, $fileName = null)
+    static public function unlink(string $pathToFile, $restrictedfileName = null)
     {
-        Tame::unlink($pathToFile, $fileName);
+        Tame::unlink($pathToFile, $restrictedfileName);
     }
 
     /**
@@ -502,6 +502,24 @@ class File extends FileMethod{
     public function echoJson(int $response = 0, $message = null)
     {
         return Tame::echoJson($response, $message);
+    }
+    
+    /**
+     * Get Error Data
+     * @return array
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+    
+    /**
+     * Get Config Data
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**

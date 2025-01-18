@@ -180,6 +180,8 @@ $file = File::name('html_input_name');
 
 $file->getMessage();
 
+
+// This will change the message text
 $file->getMessage('new Message');
 ```
 

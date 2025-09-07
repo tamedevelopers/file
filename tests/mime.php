@@ -2,6 +2,9 @@
 
 use Tamedevelopers\File\File;
 
+//on using comoposer autoload
+include_once __DIR__  . "/../vendor/autoload.php";
+
 
 // all available mime types
 // default is images

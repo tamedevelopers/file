@@ -25,7 +25,6 @@ use Tamedevelopers\File\Traits\FileValidatorTrait;
  *
  * @package   tamedevelopers\file
  * @author    Tame Developers <tamedevelopers@gmail.com>
- * @author    Fredrick Peterson <fredi.peterson2000@gmail.com>
  * @copyright 2021-2023 Tame Developers
  * @license   http://www.opensource.org/licenses/MIT The MIT License
  * @link https://github.com/tamedevelopers/file

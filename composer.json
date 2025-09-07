@@ -6,10 +6,6 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Fredrick Peterson", 
-            "email": "fredi.peterson2000@gmail.com"
-        },
-        {
             "name": "Tame Developers", 
             "email": "tamedevelopers@gmail.com" 
         }
@@ -30,5 +26,10 @@
             "src/helpers.php"
         ]
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "tamedevelopers/support": true
+        }
+    }
 }

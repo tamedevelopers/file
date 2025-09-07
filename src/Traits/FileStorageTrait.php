@@ -174,10 +174,13 @@ trait FileStorageTrait {
         // if directory is empty
         $uploadDirectory = empty($uploadDirectory) ? "" : "{$uploadDirectory}/";
 
+        $stamp = new Time($now);
+
+        // Getting current year month day
         $time = [
-            "year"  => Time::timestamp($now, 'Y'),
-            "month" => Time::timestamp($now, 'n'),
-            "day"   => Time::timestamp($now, 'j'),
+            "year"  => $stamp->format('Y'),
+            "month" => $stamp->format('n'),
+            "day"   => $stamp->format('j'),
             "now"   => $now
         ];
 

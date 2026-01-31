@@ -22,11 +22,13 @@ config_file(
 $upload = File::name('avatar')
                 // ->folder('upload/transaction')
                 ->size('500kb')
+                ->generate(false)
+                ->filterExtention(['png'])
                 ->save(function($response){
 
                     $response
+                        ->resize(1000, 1200)
                         ->watermark('tests/watermark.png', 'bottom-right')
-                        // ->resize(690, 540)
                         ->compress();
                 });
     

@@ -139,14 +139,30 @@ trait FileTrait{
     }
 
     /**
+     * Filter Extension Type
+     *
+     * @param  mixed ...$extension
+     * @return $this
+     */
+    public function filterExtention(...$extension)
+    {
+        // flattern all into one array element
+        $extension = Forge::flattenValue($extension);
+        
+        $this->config['filter'] = $extension;
+
+        return $this;
+    }
+
+    /**
      * Uploaded Image Size
      *
-     * @param  mixed $name
+     * @param mixed $name
      * 
      * @return array
      * [width, height]
      */
-    public function imageSize(string $name = null)
+    public function imageSize($name = null)
     {
         $instance = $this->name($name);
 
@@ -166,12 +182,12 @@ trait FileTrait{
     /**
      * Get Image Attributes
      *
-     * @param  string|null $sourcePath
+     * @param string|null $sourcePath
      * 
      * @return array
      * [width, height]
      */
-    public function getImageSize(string $sourcePath = null)
+    public function getImageSize($sourcePath = null)
     {
         // get image attributes
         $imagePath = @getimagesize($sourcePath);
@@ -185,12 +201,12 @@ trait FileTrait{
     /**
      * Get Mime Type
      *
-     * @param  string|null $sourcePath
+     * @param string|null $sourcePath
      * 
      * @return bool|string
      * - false on error
      */
-    public function getMimeType(string $sourcePath = null)
+    public function getMimeType($sourcePath = null)
     {
         return @mime_content_type($sourcePath);
     }

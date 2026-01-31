@@ -99,13 +99,17 @@ trait FileValidatorTrait{
         else {
 
             $validationAttempt = true;
+
+            // get mime types and extensions
+            $mime = $this->mimeAndExtension(); 
+
+            // Mime types
+            $mimeTypes = $mime['mimeTypes'];
+
+            // mimeExtensions
+            $mimeExtensions = $mime['mimeExtensions'];
+
             foreach($this->fileItemsData() as $key => $file){
-
-                // Mime types
-                $mimeTypes = $this->allowedMimeType()['mime'][$this->config['mime']]  ?? $this->allowedMimeType()['mime']['image'];
-
-                // mimeExtensions
-                $mimeExtensions = $this->allowedMimeType()['extension'][$this->config['mime']]  ?? $this->allowedMimeType()['extension']['image'];
 
                 // if image width and height is allowed
                 $imageSizeAllowed = $this->isImageWithHeightAllowed($file->imageSize());
@@ -397,6 +401,28 @@ trait FileValidatorTrait{
         }
 
         return ['response' => true, 'message' => ''];
+    }
+
+    /**
+     * Get Mime Types and Extensions
+     */
+    private function mimeAndExtension(): array
+    {
+        $default = $this->allowedMimeType();
+
+        // allowed mime types after excluding filter types
+        $mt = $this->excludeTypes($this->config['filter']); 
+
+        // Mime types
+        $mimeTypes = $mt['mime'][$this->config['mime']] ?? $default['mime']['image'];
+
+        // mimeExtensions
+        $mimeExtensions = $mt['extension'][$this->config['mime']]  ?? $default['extension']['image'];
+
+        return [
+            'mimeTypes'        => $mimeTypes,
+            'mimeExtensions'   => $mimeExtensions,
+        ];
     }
 
 }

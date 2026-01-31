@@ -215,48 +215,159 @@ abstract class FileMethod{
     }
 
     /**
+     * Base Mime Types and Extension Types
+     */
+    protected static function baseTypes(): array
+    {
+        return [
+            'video' => [
+                'map' => [
+                    'mp4'   => ['video/mp4'],
+                    'mpeg'  => ['video/mpeg'],
+                    'mov'   => ['video/quicktime'],
+                    'avi'   => ['video/x-msvideo'],
+                    'wmv'   => ['video/x-ms-wmv'],
+                ],
+            ],
+
+            'audio' => [
+                'map' => [
+                    'mp3' => ['audio/mpeg'],
+                    'wav' => ['audio/x-wav'],
+                ],
+            ],
+
+            'image' => [
+                'map' => [
+                    'jpg'  => ['image/jpeg'],
+                    'jpeg' => ['image/jpeg'],
+                    'png'  => ['image/png'],
+                    'gif'  => ['image/gif'],
+                ],
+            ],
+
+            'image_others' => [
+                'map' => [
+                    'webp' => ['image/webp'],
+                    'ico'  => ['image/vnd.microsoft.icon'],
+                ],
+            ],
+
+            'document' => [
+                'map' => [
+                    'pdf'  => ['application/pdf'],
+                    'txt'  => ['text/plain'],
+                    'doc'  => ['application/msword'],
+                    'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                ],
+            ],
+
+            'spreadsheet' => [
+                'map' => [
+                    'xls'  => ['application/vnd.ms-excel'],
+                    'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+                    'csv'  => ['text/csv'],
+                ],
+            ],
+
+            'archive' => [
+                'map' => [
+                    'zip' => [
+                        'application/zip',
+                        'application/x-zip-compressed',
+                        'multipart/x-zip',
+                    ],
+                    'rar' => [
+                        'application/x-rar-compressed',
+                        'application/octet-stream',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * MimeType Groups
+     */
+    protected static function groups(): array
+    {
+        return [
+            'image'         => ['image'],
+            'video'         => ['video'],
+            'audio'         => ['audio'],
+            'file'          => ['document'],
+            'general_image' => ['image', 'image_others'],
+            'general_media' => ['audio', 'video'],
+            'general_file'  => ['document', 'spreadsheet', 'archive'],
+            'pdf'           => ['document'],
+            'doc'           => ['document'],
+            'xls'           => ['spreadsheet'],
+            'zip'           => ['archive'],
+        ];
+    }
+
+    /**
      * Allowed MimeType and Extension Types
+     */
+    static protected function allowedMimeType(): array
+    {
+        $types  = static::baseTypes();
+        $groups = static::groups();
+
+        $result = ['mime' => [], 'extension' => []];
+
+        foreach ($groups as $group => $typeKeys) {
+            foreach ($typeKeys as $typeKey) {
+                foreach ($types[$typeKey]['map'] as $ext => $mimes) {
+                    $result['extension'][$group][] = '.' . $ext;
+                    $result['mime'][$group] = array_merge(
+                        $result['mime'][$group] ?? [],
+                        $mimes
+                    );
+                }
+            }
+
+            $result['extension'][$group] = array_values(array_unique($result['extension'][$group]));
+            $result['mime'][$group]      = array_values(array_unique($result['mime'][$group]));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Exclude mime types and extensions by raw extension keys (e.g. png, pdf)
      *
+     * @param array $extensions
      * @return array
      */
-    static protected function allowedMimeType()
+    protected static function excludeTypes(array $extensions): array
     {
-        // Extension MimeType
-        $mimeType = [
-            'video'         =>  ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv'],
-            'audio'         =>  ['audio/mpeg', 'audio/x-wav'],
-            'file'          =>  ['application/msword', 'application/pdf', 'text/plain'],
-            'image'         =>  ['image/jpeg', 'image/png', 'image/gif'],
-            'zip'           =>  ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-rar-compressed', 'application/octet-stream'],
-            'pdf'           =>  ['application/pdf'],
-            'xls'           =>  ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-            'doc'           =>  ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-            'general_image' =>  ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon'],
-            'general_media' =>  ['audio/mpeg', 'audio/x-wav', 'video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-wmv'],
-            'general_file'  =>  [
-                'application/msword', 'application/pdf', 'text/plain', 'application/zip', 'application/x-zip-compressed', 'multipart/x-zip',
-                'application/x-rar-compressed', 'application/octet-stream', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ]
-        ];
-        
+        $allowed = static::allowedMimeType();
+        $types   = static::baseTypes();
 
-        // Extension Type
-        $extensionType = [
-            'video'         =>  ['.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
-            'audio'         =>  ['.mp3', '.wav'],
-            'file'          =>  ['.docx', '.doc', '.pdf', '.txt'],
-            'image'         =>  ['.jpg', '.jpeg', '.png', '.gif'],
-            'zip'           =>  ['.zip', '.rar'],
-            'pdf'           =>  ['.pdf'],
-            'xls'           =>  ['.xlsx', '.xls'],
-            'doc'           =>  ['.docx', '.doc', '.txt'],
-            'general_image' =>  ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.ico'],
-            'general_media' =>  ['.mp3', '.wav', '.mp4', '.mpeg', '.mov', '.avi', '.wmv'],
-            'general_file'  =>  ['.docx', '.doc', '.pdf', '.txt', '.zip', '.rar', '.xlsx', '.xls'],
-        ];
-        
-        return ['mime' => $mimeType, 'extension' => $extensionType];
+        $extensions = array_map('strtolower', $extensions);
+
+        $excludeExt  = [];
+        $excludeMime = [];
+
+        foreach ($types as $type) {
+            foreach ($type['map'] as $ext => $mimes) {
+                if (in_array($ext, $extensions, true)) {
+                    $excludeExt[]  = '.' . $ext;
+                    $excludeMime = array_merge($excludeMime, $mimes);
+                }
+            }
+        }
+
+        foreach ($allowed['extension'] as $group => $exts) {
+            $allowed['extension'][$group] = array_values(array_diff($exts, $excludeExt));
+        }
+
+        foreach ($allowed['mime'] as $group => $mimes) {
+            $allowed['mime'][$group] = array_values(array_diff($mimes, $excludeMime));
+        }
+
+        return $allowed;
     }
     
 }

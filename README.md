@@ -29,6 +29,7 @@
   * [Generate](#generate)
   * [Folder](#folder)
   * [Filter](#filter)
+  * [filterExtention](#filterExtention)
   * [Structure](#structure)
   * [Size](#size)
   * [Limit](#limit)
@@ -335,7 +336,7 @@ File::name('avatar')
 
 ### Filter
 - Takes index or closed array index
-    - Remove `error status code` you do not want to validate
+    - Removse `error status code` you do not want to validate
     - You cannot remove Error `200`
 
 | Status Code   |   Description                                         |
@@ -356,6 +357,21 @@ File::name('avatar')
 ```
 File::name('avatar')
     ->filter([401, 402, 405]);
+```
+
+### filterExtention
+- Takes index or closed array index
+    - Removes `file extention and mime-types` you do not want to validate
+
+```
+File::name('avatar')
+    ->filterExtention('png', 'gif');
+```
+
+- `or`
+```
+File::name('avatar')
+    ->filterExtention(['png', 'gif']);
 ```
 
 ### Structure
@@ -610,19 +626,19 @@ if($file->isCompleted()){
 
 ### Mime Types
 
-| Key               |   Description                                         |
-|-------------------|-------------------------------------------------------|
-| video             |   `.mp4\|.mpeg\|.mov\|.avi\|.wmv`                     |
-| audio             |   `.mp3\|.wav`                                        |
-| file              |   `.docx\|.doc\|.pdf\|.txt`                           |
-| image             |   `.jpg\|.jpeg\|.png\|.gif`                           |
-| zip               |   `.zip\|.rar`                                        |
-| pdf               |   `.pdf`                                              |
-| xls               |   `.xlsx\|.xls`                                       |
-| doc               |   `.docx\|.doc\|.txt`                                 |
-| general_image     |   `.jpg\|.jpeg\|.png\|.gif\|.webp\|.ico`              |
-| general_media     |   `.mp3\|.wav\|.mp4\|.mpeg\|.mov\|.avi\|.wmv`         |
-| general_file      |   `.docx\|.doc\|.pdf\|.txt\|.zip\|.rar\|.xlsx\|.xls`  |
+| Key               |   Description                                               |
+|-------------------|-------------------------------------------------------------|
+| video             |   `.mp4\|.mpeg\|.mov\|.avi\|.wmv`                           |
+| audio             |   `.mp3\|.wav`                                              |
+| file              |   `.docx\|.doc\|.pdf\|.txt`                                 |
+| image             |   `.jpg\|.jpeg\|.png\|.gif`                                 |
+| zip               |   `.zip\|.rar`                                              |
+| pdf               |   `.pdf`                                                    |
+| xls               |   `.xlsx\|.xls\|.csv`                                       |
+| doc               |   `.docx\|.doc\|.txt`                                       |
+| general_image     |   `.jpg\|.jpeg\|.png\|.gif\|.webp\|.ico`                    |
+| general_media     |   `.mp3\|.wav\|.mp4\|.mpeg\|.mov\|.avi\|.wmv`               |
+| general_file      |   `.docx\|.doc\|.pdf\|.txt\|.zip\|.rar\|.xlsx\|.xls\|.csv`  |
 
 ```
 File::name('invoiceDescription')

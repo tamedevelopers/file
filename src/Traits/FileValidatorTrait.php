@@ -410,8 +410,11 @@ trait FileValidatorTrait{
     {
         $default = $this->allowedMimeType();
 
+        // get filter if any or set to empty array
+        $filter = $this->config['filter'] ?? [];
+
         // allowed mime types after excluding filter types
-        $mt = $this->excludeTypes($this->config['filter']); 
+        $mt = $this->excludeTypes($filter); 
 
         // Mime types
         $mimeTypes = $mt['mime'][$this->config['mime']] ?? $default['mime']['image'];

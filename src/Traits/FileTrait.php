@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Traits;
 
+use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Capsule\Forge;
@@ -148,6 +149,11 @@ trait FileTrait{
     {
         // flattern all into one array element
         $extension = Forge::flattenValue($extension);
+
+        // clean any leading (dot) and convert to lowercase
+        $extension = array_map(function ($value) {
+            return Str::lower(ltrim($value, '.')); 
+        }, $extension);
         
         $this->config['filter'] = $extension;
 

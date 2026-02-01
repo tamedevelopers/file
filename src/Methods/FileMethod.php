@@ -345,8 +345,6 @@ abstract class FileMethod{
         $allowed = static::allowedMimeType();
         $types   = static::baseTypes();
 
-        $extensions = array_map('strtolower', $extensions);
-
         $excludeExt  = [];
         $excludeMime = [];
 

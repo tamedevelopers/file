@@ -140,7 +140,7 @@ trait FileTrait{
     }
 
     /**
-     * Filter Extension Type
+     * Filter Extension Type (remove unwanted extensions) Extension you do not want to allow
      *
      * @param  mixed ...$extension
      * @return $this

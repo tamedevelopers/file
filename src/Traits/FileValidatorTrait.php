@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tamedevelopers\File\Traits;
 
 
-use Tamedevelopers\Support\Tame;
+use Closure;
 use Tamedevelopers\File\FileStorage;
+use Tamedevelopers\Support\Tame;
 
 
 trait FileValidatorTrait{
@@ -112,7 +113,7 @@ trait FileValidatorTrait{
             foreach($this->fileItemsData() as $key => $file){
 
                 // if image width and height is allowed
-                $imageSizeAllowed = $this->isImageWithHeightAllowed($file->imageSize());
+                $imageSizeAllowed = $this->validateImageDimensions($file->imageSize());
 
                 /**
                 * File upload is greater than allowed size of. - error 402
@@ -299,103 +300,135 @@ trait FileValidatorTrait{
      * @param  mixed $value
      * @return bool
      */
-    private function isImageWidthHeightAllowed($value = null)
+    private function isImageSizeAllowed($value = null)
     {
-        if(!empty($value) && $value['size'] > 0){
-            return true;
+        return is_array($value)
+            && isset($value['size'])
+            && (int) $value['size'] > 0;
+    }
+
+    /**
+     * Normalize width/height config safely
+     *
+     * @param mixed $value
+     * @param array $default
+     * @return array
+     */
+    private function normalizeDimension($value, array $default): array
+    {
+        if ($this->isImageSizeAllowed($value)) {
+            return [
+                'size'   => (int) $value['size'],
+                'actual' => (bool) ($value['actual'] ?? false),
+            ];
         }
 
-        return false;
+        return $default;
     }
     
     /**
      * Check if image width and height is allowed
      *
-     * @param  mixed $size
+     * @param   array $size ['width' => int, 'height' => int]
      * @return array
      */
-    private function isImageWithHeightAllowed($size = [])
+    private function validateImageDimensions($size = [])
     {
         // Check if config width and height is not empty
         $config = $this->config;
-        if( $this->isImageWidthHeightAllowed($config['width']) && $this->isImageWidthHeightAllowed($config['height']) ){
-            
-            // only pass through if both witdh and height is more than 0
-            // this means we have an actual image data
-            if($size['width'] > 0 && $size['height'] > 0){
 
-                // get setting data
-                $sWidth = $config['width'];
-                $sHeight = $config['height'];
+        // Normalize dimension structure
+        $defaultDimension = [
+            'size'   => 0,
+            'actual' => false,
+        ];
 
-                // if width and height is actual size check
-                if($sWidth['actual'] && $sHeight['actual'])
-                {
-                    // if both width and height not same as allowed dimension
-                    if($size['width'] != $sWidth['size'] && $size['height'] != $sHeight['size']){
-                        return [
-                            'response'  => false,
-                            'message'   => sprintf(
-                                "%s %s:%spx %s %s:%spx", 
-                                $this->translation('405'), 
-                                $this->translation('width'), 
-                                $sWidth['size'],
-                                $this->translation('and'),
-                                $this->translation('height'),
-                                $sHeight['size'],
-                            )
-                        ];
-                    }
-                } 
-                
-                // other case scenerio
-                else{
+        $config['width'] = $this->normalizeDimension($config['width'], $defaultDimension);
+        $config['height'] = $this->normalizeDimension($config['height'], $defaultDimension);
 
-                    // check if both are `false`
-                    if(!$sWidth['actual'] && !$sHeight['actual']){
+        $sWidth  = $config['width'];
+        $sHeight = $config['height'];
 
-                        // if both width and height are less than allowed dimension
-                        if($size['width'] < $sWidth['size'] || $size['height'] < $sHeight['size']){
-                            return [
-                                'response'  => false,
-                                'message'   => sprintf(
-                                    "%s %s:%spx %s %s:%spx", 
-                                    $this->translation('405x'), 
-                                    $this->translation('width'), 
-                                    $sWidth['size'],
-                                    $this->translation('and'),
-                                    $this->translation('height'),
-                                    $sHeight['size'],
-                                )
-                            ];
-                        }
-                    } 
+        // Ensure valid image dimensions
+        if (empty($size['width']) || empty($size['height']) || $size['width'] <= 0 || $size['height'] <= 0) {
+            return [
+                'response' => false,
+                'message'  => 'Invalid image dimensions',
+            ];
+        }
 
-                    // check for width validation
-                    if($size['width'] < $sWidth['size']){
-                        return [
-                            'response'  => false,
-                            'message'   => sprintf(
-                                "%s %s:%spx", 
-                                $this->translation('405x'), 
-                                $this->translation('width'),
-                                $sWidth['size'],
-                            )
-                        ];
-                    }
+        /*
+        |--------------------------------------------------------------------------
+        | WIDTH VALIDATION
+        |--------------------------------------------------------------------------
+        */
+        if ($sWidth['size'] > 0) {
 
-                    // check for height validation
-                    if($size['height'] < $sHeight['size']){
-                        return [
-                            'response'  => false,
-                            'message'   => sprintf(
-                                "%s %s:%spx", 
-                                $this->translation('405x'), 
-                                $this->translation('height'),
-                                $sHeight['size'],
-                            )
-                        ];
-                    }
+            // Exact match required
+            if ($sWidth['actual']) {
+                if ($size['width'] !== (int) $sWidth['size']) {
+                    return [
+                        'response' => false,
+                        'message'  => sprintf(
+                            "%s %s:%spx",
+                            $this->translation('405'),
+                            $this->translation('width'),
+                            $sWidth['size']
+                        ),
+                    ];
+                }
+            }
+
+            // Minimum required
+            else {
+                if ($size['width'] < (int) $sWidth['size']) {
+                    return [
+                        'response' => false,
+                        'message'  => sprintf(
+                            "%s %s:%spx",
+                            $this->translation('405x'),
+                            $this->translation('width'),
+                            $sWidth['size']
+                        ),
+                    ];
+                }
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | HEIGHT VALIDATION
+        |--------------------------------------------------------------------------
+        */
+        if ($sHeight['size'] > 0) {
+
+            // Exact match required
+            if ($sHeight['actual']) {
+                if ($size['height'] !== (int) $sHeight['size']) {
+                    return [
+                        'response' => false,
+                        'message'  => sprintf(
+                            "%s %s:%spx",
+                            $this->translation('405'),
+                            $this->translation('height'),
+                            $sHeight['size']
+                        ),
+                    ];
+                }
+            }
+
+            // Minimum required
+            else {
+                if ($size['height'] < (int) $sHeight['size']) {
+                    return [
+                        'response' => false,
+                        'message'  => sprintf(
+                            "%s %s:%spx",
+                            $this->translation('405x'),
+                            $this->translation('height'),
+                            $sHeight['size']
+                        ),
+                    ];
                 }
             }
         }

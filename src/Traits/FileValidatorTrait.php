@@ -113,7 +113,7 @@ trait FileValidatorTrait{
             foreach($this->fileItemsData() as $key => $file){
 
                 // if image width and height is allowed
-                $imageSizeAllowed = $this->validateImageDimensions($file->imageSize());
+                $imageSizeAllowed = $this->validateImageDimensions($file->imageSize(), $file);
 
                 /**
                 * File upload is greater than allowed size of. - error 402
@@ -330,9 +330,10 @@ trait FileValidatorTrait{
      * Check if image width and height is allowed
      *
      * @param   array $size ['width' => int, 'height' => int]
+     * @param   mixed $file
      * @return array
      */
-    private function validateImageDimensions($size = [])
+    private function validateImageDimensions($size = [], $file)
     {
         // Check if config width and height is not empty
         $config = $this->config;
@@ -343,92 +344,95 @@ trait FileValidatorTrait{
             'actual' => false,
         ];
 
-        $config['width'] = $this->normalizeDimension($config['width'], $defaultDimension);
-        $config['height'] = $this->normalizeDimension($config['height'], $defaultDimension);
+        // if file is a valid image
+        if($file->isImage()){
+            $config['width'] = $this->normalizeDimension($config['width'], $defaultDimension);
+            $config['height'] = $this->normalizeDimension($config['height'], $defaultDimension);
 
-        $sWidth  = $config['width'];
-        $sHeight = $config['height'];
+            $sWidth  = $config['width'];
+            $sHeight = $config['height'];
 
-        // Ensure valid image dimensions
-        if (empty($size['width']) || empty($size['height']) || $size['width'] <= 0 || $size['height'] <= 0) {
-            return [
-                'response' => false,
-                'message'  => 'Invalid image dimensions',
-            ];
-        }
+            // Ensure valid image dimensions
+            if (empty($size['width']) || empty($size['height']) || $size['width'] <= 0 || $size['height'] <= 0) {
+                return [
+                    'response' => false,
+                    'message'  => 'Invalid image dimensions',
+                ];
+            }
 
-        /*
-        |--------------------------------------------------------------------------
-        | WIDTH VALIDATION
-        |--------------------------------------------------------------------------
-        */
-        if ($sWidth['size'] > 0) {
+            /*
+            |--------------------------------------------------------------------------
+            | WIDTH VALIDATION
+            |--------------------------------------------------------------------------
+            */
+            if ($sWidth['size'] > 0) {
 
-            // Exact match required
-            if ($sWidth['actual']) {
-                if ($size['width'] !== (int) $sWidth['size']) {
-                    return [
-                        'response' => false,
-                        'message'  => sprintf(
-                            "%s %s:%spx",
-                            $this->translation('405'),
-                            $this->translation('width'),
-                            $sWidth['size']
-                        ),
-                    ];
+                // Exact match required
+                if ($sWidth['actual']) {
+                    if ($size['width'] !== (int) $sWidth['size']) {
+                        return [
+                            'response' => false,
+                            'message'  => sprintf(
+                                "%s %s:%spx",
+                                $this->translation('405'),
+                                $this->translation('width'),
+                                $sWidth['size']
+                            ),
+                        ];
+                    }
+                }
+
+                // Minimum required
+                else {
+                    if ($size['width'] < (int) $sWidth['size']) {
+                        return [
+                            'response' => false,
+                            'message'  => sprintf(
+                                "%s %s:%spx",
+                                $this->translation('405x'),
+                                $this->translation('width'),
+                                $sWidth['size']
+                            ),
+                        ];
+                    }
                 }
             }
 
-            // Minimum required
-            else {
-                if ($size['width'] < (int) $sWidth['size']) {
-                    return [
-                        'response' => false,
-                        'message'  => sprintf(
-                            "%s %s:%spx",
-                            $this->translation('405x'),
-                            $this->translation('width'),
-                            $sWidth['size']
-                        ),
-                    ];
+            /*
+            |--------------------------------------------------------------------------
+            | HEIGHT VALIDATION
+            |--------------------------------------------------------------------------
+            */
+            if ($sHeight['size'] > 0) {
+
+                // Exact match required
+                if ($sHeight['actual']) {
+                    if ($size['height'] !== (int) $sHeight['size']) {
+                        return [
+                            'response' => false,
+                            'message'  => sprintf(
+                                "%s %s:%spx",
+                                $this->translation('405'),
+                                $this->translation('height'),
+                                $sHeight['size']
+                            ),
+                        ];
+                    }
                 }
-            }
-        }
 
-        /*
-        |--------------------------------------------------------------------------
-        | HEIGHT VALIDATION
-        |--------------------------------------------------------------------------
-        */
-        if ($sHeight['size'] > 0) {
-
-            // Exact match required
-            if ($sHeight['actual']) {
-                if ($size['height'] !== (int) $sHeight['size']) {
-                    return [
-                        'response' => false,
-                        'message'  => sprintf(
-                            "%s %s:%spx",
-                            $this->translation('405'),
-                            $this->translation('height'),
-                            $sHeight['size']
-                        ),
-                    ];
-                }
-            }
-
-            // Minimum required
-            else {
-                if ($size['height'] < (int) $sHeight['size']) {
-                    return [
-                        'response' => false,
-                        'message'  => sprintf(
-                            "%s %s:%spx",
-                            $this->translation('405x'),
-                            $this->translation('height'),
-                            $sHeight['size']
-                        ),
-                    ];
+                // Minimum required
+                else {
+                    if ($size['height'] < (int) $sHeight['size']) {
+                        return [
+                            'response' => false,
+                            'message'  => sprintf(
+                                "%s %s:%spx",
+                                $this->translation('405x'),
+                                $this->translation('height'),
+                                $sHeight['size']
+                            ),
+                        ];
+                    }
                 }
             }
         }

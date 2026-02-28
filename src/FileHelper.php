@@ -50,6 +50,16 @@ class FileHelper extends FileMethod{
     }
     
     /**
+     * Get File Type
+     *
+     * @return string
+     */
+    public function type()
+    {
+        return $this->data['type'];
+    }
+    
+    /**
      * Get File Name
      *
      * @return string
@@ -97,6 +107,27 @@ class FileHelper extends FileMethod{
             'width'  => $imagePath[0] ?? null,
             'height' => $imagePath[1] ?? null
         ];
+    }
+
+    /**
+     * Determine whether the uploaded file is a valid image.
+     *
+     * This method validates the file by:
+     * - Checking that a MIME type exists
+     * - Ensuring the MIME type starts with "image/"
+     * - Verifying the file can be read by getimagesize()
+     *
+     * This helps prevent spoofed extensions (e.g. renamed .exe to .jpg).
+     *
+     * @return bool
+     *  True if the file is a valid image, otherwise false.
+     */
+    public function isImage()
+    {
+        $mime = $this->mime();
+
+        return $mime && str_starts_with($mime, 'image/') 
+            && @getimagesize($this->tmp()) !== false;
     }
        
     /**

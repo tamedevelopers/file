@@ -2,6 +2,8 @@
 
 namespace Tamedevelopers\File\Traits;
 
+use Closure;
+
 
 trait FileMagicTrait{
     

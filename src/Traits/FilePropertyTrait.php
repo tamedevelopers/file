@@ -82,6 +82,7 @@ trait FilePropertyTrait{
         'mime'      => 'image',
         'structure' => null,
         'generate'  => true,
+        'limitText' => true,
     ];
 
     /**

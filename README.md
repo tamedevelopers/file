@@ -16,6 +16,7 @@
 * [INPUT HTML STRUCTURE](#input-html-structure)
 * [Response Data](#response-data)
     * [Get Message](#get-message)
+    * [Get Validation Message](#get-validation-message)
     * [Get Status](#get-status)
     * [Get Class](#get-class)
     * [First](#first)
@@ -33,6 +34,7 @@
   * [Structure](#structure)
   * [Size](#size)
   * [Limit](#limit)
+  * [limitText](#limitText)
   * [Mime](#mime)
   * [Width](#width)
   * [Height](#height)
@@ -60,7 +62,7 @@
 
 Prior to installing `support package` get the [Composer](https://getcomposer.org) dependency manager for PHP because it'll simplify installation.
 
-```
+```txt
 composer require tamedevelopers/file
 ```
 
@@ -68,7 +70,7 @@ composer require tamedevelopers/file
 
 **Step 1** — Composer  `Instantiate class using`:
 
-```
+```php
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Tamedevelopers\File\File;
@@ -77,14 +79,14 @@ $file = new File();
 ```
 
 - **Example 2**
-```
+```php
 require_once __DIR__ . '/vendor/autoload.php';
 
 $file = new Tamedevelopers\File\File();
 ```
 
 - or -- `Helpers Function`
-```
+```php
 $file = TameFile();
 ```
 
@@ -93,7 +95,7 @@ $file = TameFile();
 - By default Aws load entire SDK we won't be needing
     - Copy the below code into your root `composer.json` and then run `composer update` in terminal.
 
-```
+```json
 "scripts": {
     "pre-autoload-dump": "Aws\\Script\\Composer\\Composer::removeUnusedServices"
 },
@@ -116,28 +118,31 @@ $file = TameFile();
 | config        |  Assoc `array`    | Create all needed config data     |
 | class         |  Assoc `array`    | Create error and success class    |
 
-```config 
+```php
 config_file(
     message: [
-        '401'   => 'Select file to upload',
-        '402'   => 'File upload is greater than allowed size of:',
-        '403'   => 'Maximum file upload exceeded. Limit is:',
-        '404'   => 'Uploaded file format not allowed. Allowed formats:',
-        '405'   => 'Image dimension allowed is:',
-        '405x'  => 'Image dimension should be greater than or equal to:',
-        '200'   => 'File uploaded successfully:',
-        'kb'    => 'kb',
-        'mb'    => 'mb',
-        'gb'    => 'gb',
-        'and'   => 'and',
-        'width' => 'width',
-        'height'=> 'height',
-        'files' => 'files',
-        'file'  => 'file',
+        '401'               => 'Select file to upload',
+        '402'               => 'File upload is greater than allowed size of:',
+        '403'               => 'Maximum file upload exceeded. Limit is:',
+        '404'               => 'Uploaded file format not allowed! allowed format is:',
+        '405'               => 'Image dimension allowed is:',
+        '405x'              => 'Image dimension should be greater than or equal to:',
+        '200'               => 'File uploaded successfully:',
+        'limit'             => 'Limit:',
+        'max'               => 'Max:',
+        'allowed_files'     => 'Allowed Files:',
+        'kb'                => 'kb',
+        'mb'                => 'mb',
+        'gb'                => 'gb',
+        'and'               => 'and',
+        'width'             => 'width',
+        'height'            => 'height',
+        'files'             => 'files',
+        'file'              => 'file',
     ],
     config: [
         'limit'         => 1,
-        'mime'          => 'image', // video|audio|file|image|zip|pdf|xls|doc|general_image|general_media|general_file
+        'mime'          => 'image', // image|video|audio|file|zip|pdf|xls|doc|general_image|general_media|general_file
         'size'          => '2mb',
         'baseDir'       => 'public',
         'driver'        => 'local',
@@ -176,7 +181,8 @@ config_file(
 
 ### Get Message
 - This will return error message
-```
+
+```php
 $file = File::name('html_input_name');
 
 $file->getMessage();
@@ -186,9 +192,21 @@ $file->getMessage();
 $file->getMessage('new Message');
 ```
 
+### Get Validation Message
+- This will return readable public file upload required message
+
+```php
+$file = File::name('html_input_name');
+
+$file->getValidationMessage();
+
+// Allowed Files: JPG, JPEG, PNG, GIF (Max: 3mb)
+```
+
 ### Get Status
 - This will return error status code
-```
+
+```php
 $file = File::name('html_input_name');
 
 $file->getStatus();
@@ -196,7 +214,8 @@ $file->getStatus();
 
 ### Get Class
 - This will only return msg, if there's an error or success
-```
+
+```php
 $file = File::name('html_input_name');
 
 $file->getClass();
@@ -206,7 +225,7 @@ $file->getClass();
 - This will get the first uploaded data 
     - [optional] You can pass the mode as string `name` \| `path`\|`url`
 
-```
+```php
 ->save(function($response){
 
     $response->first();
@@ -214,11 +233,11 @@ $file->getClass();
 ```
 
 - `or`
-```
+```php
 $upload = File::name('avatar')
                 ->save();
 
-$upload->first('url);
+$upload->first('url');
 ```
 
 ### Get
@@ -226,7 +245,7 @@ $upload->first('url);
     - Returns an index array of all uploaded data, `[name, path, url]`
     - [optional] You can pass the mode as string `name` \| `path`\|`url`
 
-```
+```php
 ->save(function($response){
 
     $response->get();
@@ -234,18 +253,18 @@ $upload->first('url);
 ```
 
 - `or`
-```
+```php
 $upload = File::name('avatar')
             ->save();
 
-$upload->get('name);
+$upload->get('name');
 ```
 
 ### Form
 - Return form request data
     - This will return `validator package` object [Validator](https://github.com/tamedevelopers/validator) 
 
-```
+```php
 ->save(function($response){
 
     $response->form();
@@ -257,14 +276,13 @@ $upload->get('name);
     - [mandatory] `$fileToUnlink` Path to file, you want to unlink.
     - [optional] `$checkFile`. This will check if `$fileToUnlink` is not same, before.
 
-```
+```php
 ->save(function($response){
 
     $userAvatar;
 
     $response->unlink("public/images/{$userAvatar}", "avatar.svg");
-
-    <!-- the above will only unlink when value is not avatar.svg -->
+    // the above will only unlink when value is not avatar.svg
 });
 ```
 
@@ -274,7 +292,7 @@ $upload->get('name);
 - Takes one param `string` as input name
     - Static method by default
 
-```
+```php
 File::name('html_input_name');
 ```
 
@@ -288,13 +306,13 @@ File::name('html_input_name');
 | s3        |   Amazon `s3` driver. The package loaded `[Ec2 and CloudWatch]` needed by s3  |
 | local     |   Local `host server` driver.                                                 |
 
-```
+```php
 File::name('avatar')
     ->driver('s3');
 ```
 
 - `using driver if project is not in any Frameworks`
-```
+```php
 use Tamedevelopers\Support\Env;
 
 // if your project is not on on core php, then you'll need to load env.
@@ -313,7 +331,7 @@ File::name('avatar')
 - Takes one param `string` as base directory name
     - This will override the global configuration settings (Domain and Server Path will be set)
 
-```
+```php
 File::name('avatar')
     ->baseDir('newBaseDirectory');
 ```
@@ -321,7 +339,7 @@ File::name('avatar')
 ### Generate
 - Takes one param `bool`
 
-```
+```php
 File::name('avatar')
         ->generate(false);
 ```
@@ -329,7 +347,7 @@ File::name('avatar')
 ### Folder
 - Takes one param `string` as `folder_path` to save file
 
-```
+```php
 File::name('avatar')
     ->folder('upload/user');
 ```
@@ -348,13 +366,13 @@ File::name('avatar')
 | 405           |   Image dimension allowed is                          |
 | 200           |   File uploaded successfully                          |
 
-```
+```php
 File::name('avatar')
     ->filter(401, 402);
 ```
 
 - `or`
-```
+```php
 File::name('avatar')
     ->filter([401, 402, 405]);
 ```
@@ -363,13 +381,13 @@ File::name('avatar')
 - Takes index or closed array index
     - Removes `file extention and mime-types` you do not want to validate
 
-```
+```php
 File::name('avatar')
     ->filterExtention('png', 'gif');
 ```
 
 - `or`
-```
+```php
 File::name('avatar')
     ->filterExtention(['png', 'gif']);
 ```
@@ -391,7 +409,7 @@ File::name('avatar')
         - Month
             - Day
 
-```
+```php
 File::name('avatar')
     ->structure('month');
 ```
@@ -400,13 +418,13 @@ File::name('avatar')
 - Takes one param `string` \| `int`
     - size in `int` \| `kb` \| `mb` \| `gb`
 
-```
+```php
 File::name('avatar')
     ->size('1.5mb'); // will be converted to:  1.5 * (1024 * 1024) = 1572864
 ```
 
 - `or`
-```
+```php
 File::name('avatar')
     ->size(2097152); // = 2097152|2mb
 ```
@@ -415,16 +433,29 @@ File::name('avatar')
 - Takes one param `string` \| `int`
     - Default limit is set to `1` upload
 
-```
+```php
 File::name('avatar')
     ->limit(2);
+```
+
+### limitText
+- Takes one param `bool` Default is `true`
+
+```php
+$upload = File::name('avatar')
+            ->limit(5)
+            ->limitText(true);
+
+// If limit is more then 1, the limit text automatically shows to users
+
+$upload->getValidationMessage() // Allowed Files: JPG, JPEG, PNG, GIF (Max: 3mb) - (Limit: 5 files)
 ```
 
 ### Mime
 - Takes one param `string` as mime type
     - Goto `Mime Types` to see list
 
-```
+```php
 File::name('avatar')
     ->mime('image');
 ```
@@ -434,7 +465,7 @@ File::name('avatar')
     - 1st param is `string` \| `int`. width size
     - 2nd param is `bool`. This allow to check if size should be === or >= size of uploaded image. Default is `true`
 
-```
+```php
 $file = File::name('avatar')
         ->width(700, false);
 
@@ -446,7 +477,7 @@ dd(
 ### Height
 - Same as `width` method
 
-```
+```php
 File::name('avatar')
     ->width(700)
     ->height(400);
@@ -457,7 +488,7 @@ File::name('avatar')
     - Takes an [optional] param as a `callable\|closure` function.
 
 
-```
+```php
 File::name('banner')
     ->folder('upload/banner')
     ->validate(function($response){
@@ -472,7 +503,7 @@ File::name('banner')
 - Takes an [optional] param as a `callable\|closure` function.
     - Calling this [method] will automatically save the data.
 
-```
+```php
 File::name('banner')
     ->folder('upload/banner')
     ->save(function($response){
@@ -482,7 +513,7 @@ File::name('banner')
 ```
 
 - `or`
-```
+```php
 $file = File::name('banner')
             ->folder('upload/banner')
             ->save();
@@ -497,7 +528,7 @@ dd(
 - Takes two param as `size` `int` width and height
     - Returns an instance of self
 
-```
+```php
 File::name()
     ->folder('upload/banner')
     ->save(function($response){
@@ -522,7 +553,7 @@ File::name()
 | top-left          |  apply watermart to possition `top-left`      |
 | center            |  apply watermart to possition `center`        |
 
-```
+```php
 File::name('avatar')
     ->folder('upload/banner')
     ->save(function($response){
@@ -535,7 +566,7 @@ File::name('avatar')
 ### Compress
 - Returns an instance of self
 
-```
+```php
 File::name('avatar')
     ->folder('upload/banner')
     ->save(function($response){
@@ -545,8 +576,8 @@ File::name('avatar')
 
         // you can perform method chaining as well
         $response->resize(200, 450)
-                    ->watermark('watermark.png', 'center')
-                    ->compress();
+            ->watermark('watermark.png', 'center')
+            ->compress();
         
     });
 ```
@@ -581,7 +612,7 @@ File::imageSize('name_of_uploaded_file')
 - Takes one param as `string`
     - Return `string` \| `bool`. `false` on error.
 
-```
+```php
 File::getMimeType('full_source_path')
 ```
 
@@ -589,7 +620,7 @@ File::getMimeType('full_source_path')
 - Takes one param as `string`. Input file name
     - Return bool `true` \| `false`
 
-```
+```php
 File::notEmpty('avatar');
 File::isNotEmpty('avatar');
 File::has('avatar');
@@ -598,14 +629,14 @@ File::has('avatar');
 ### Is Empty
 - Same as not empty
 
-```
+```php
 File::isEmpty('avatar')
 ```
 
 ### Has Error
 - Returns true or false. Check if there's an error in the upload
 
-```
+```php
 $file = File::name('avatar')
 
 if($file->hasError()){
@@ -616,7 +647,7 @@ if($file->hasError()){
 ### Is Completed
 - Returns true or false. Check if upload has been completed
 
-```
+```php
 $file = File::name('avatar')
 
 if($file->isCompleted()){
@@ -640,7 +671,7 @@ if($file->isCompleted()){
 | general_media     |   `.mp3\|.wav\|.mp4\|.mpeg\|.mov\|.avi\|.wmv`               |
 | general_file      |   `.docx\|.doc\|.pdf\|.txt\|.zip\|.rar\|.xlsx\|.xls\|.csv`  |
 
-```
+```php
 File::name('invoiceDescription')
     ->mime('zip') 
     ->save();

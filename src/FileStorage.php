@@ -171,7 +171,7 @@ class FileStorage extends FileMethod{
     /**
      * Check If Driver Package has been installed
      *
-     * @param  mixed $class
+     * @param  mixed $data
      * @return void
      */
     static private function isDriverPackageInstalled($data = '')

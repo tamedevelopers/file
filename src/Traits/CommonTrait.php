@@ -3,6 +3,10 @@
 namespace Tamedevelopers\File\Traits;
 
 
+/**
+ * @property mixed $isValidatedCalled
+ * @method mixed validate()
+ */
 trait CommonTrait{
 
     /**
@@ -84,7 +88,7 @@ trait CommonTrait{
     /**
 	 * Check if image is transparent
 	 *
-	 * @param  mixed $im
+	 * @param  mixed $gdImage
 	 * @return bool
 	 */
 	private function isImageTransparent($gdImage) 

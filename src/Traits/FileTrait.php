@@ -9,9 +9,7 @@ use Tamedevelopers\Support\Tame;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Capsule\Forge;
 
-/**
- * @property $config
- */
+
 trait FileTrait{
 
     /**
@@ -29,21 +27,24 @@ trait FileTrait{
 
             // create message
             $message = $message + [
-                '401'   => 'Select file to upload',
-                '402'   => 'File upload is greater than allowed size of:',
-                '403'   => 'Maximum file upload exceeded. Limit is:',
-                '404'   => 'Uploaded file format not allowed! allowed format is:',
-                '405'   => 'Image dimension allowed is:',
-                '405x'  => 'Image dimension should be greater than or equal to:',
-                '200'   => 'File uploaded successfully:',
-                'kb'    => 'kb',
-                'mb'    => 'mb',
-                'gb'    => 'gb',
-                'and'   => 'and',
-                'width' => 'width',
-                'height'=> 'height',
-                'files' => 'files',
-                'file'  => 'file',
+                '401'               => 'Select file to upload',
+                '402'               => 'File upload is greater than allowed size of:',
+                '403'               => 'Maximum file upload exceeded. Limit is:',
+                '404'               => 'Uploaded file format not allowed! allowed format is:',
+                '405'               => 'Image dimension allowed is:',
+                '405x'              => 'Image dimension should be greater than or equal to:',
+                '200'               => 'File uploaded successfully:',
+                'limit'             => 'Limit:',
+                'max'               => 'Max:',
+                'allowed_files'     => 'Allowed Files:',
+                'kb'                => 'kb',
+                'mb'                => 'mb',
+                'gb'                => 'gb',
+                'and'               => 'and',
+                'width'             => 'width',
+                'height'            => 'height',
+                'files'             => 'files',
+                'file'              => 'file',
             ];
 
             // base dirrectory name

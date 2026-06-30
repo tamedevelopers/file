@@ -10,6 +10,11 @@ use Tamedevelopers\File\FileStorage;
 use Tamedevelopers\Support\Tame;
 
 
+/**
+ * @method mixed isEmpty(mixed $name)
+ * @method mixed fileIsset(mixed $name)
+ * @method mixed isArray(mixed $name)
+ */
 trait FileValidatorTrait{
 
     
@@ -209,7 +214,7 @@ trait FileValidatorTrait{
     /**
      * Run a callback 
      *
-     * @param  Closure $function
+     * @param  Closure $closure
      * @return mixed
      */
     private function callback($closure = null)

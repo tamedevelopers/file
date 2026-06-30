@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File;
 
-use Exception;
-use Tamedevelopers\Support\Str;
-use Tamedevelopers\Support\Tame;
-use Tamedevelopers\Support\Server;
+use Closure;
+use Tamedevelopers\File\ImageAutoresize;
 use Tamedevelopers\File\ImageCompress;
 use Tamedevelopers\File\ImageWatermark;
-use Tamedevelopers\Validator\Validator;
-use Tamedevelopers\File\ImageAutoresize;
-use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Methods\FileMethod;
 use Tamedevelopers\File\Traits\CommonTrait;
-use Tamedevelopers\File\Traits\FileStorageTrait;
 use Tamedevelopers\File\Traits\FilePropertyTrait;
+use Tamedevelopers\File\Traits\FileStorageTrait;
+use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Traits\FileValidatorTrait;
+use Tamedevelopers\Support\Server;
+use Tamedevelopers\Support\Str;
+use Tamedevelopers\Support\Tame;
 
 
 /**
@@ -302,6 +301,19 @@ class File extends FileMethod{
 
         return $this;
     }
+     
+    /**
+     * Show limit text
+     *
+     * @param  bool $show
+     * @return $this
+     */
+    public function limitText($show = true)
+    {
+        $this->config['limitText'] = $show;
+
+        return $this;
+    }
     
     /**
      * Set width
@@ -367,6 +379,55 @@ class File extends FileMethod{
         $this->data['message'] = empty($message) ? $this->data['message'] : $message;
 
         return $this->data['message'];
+    }
+
+    /**
+     * Get Error Validation Message
+     * 
+     * @return string
+     */
+    public function getValidationMessage()
+    {
+        // get mime types and extensions
+        $mime = $this->mimeAndExtension(); 
+
+        // Mime types
+        $mimeTypes = $mime['mimeTypes'];
+
+        // mimeExtensions
+        $mimeExtensions = $mime['mimeExtensions'];
+
+        // convert size to btyes
+        $byteToUnit = Tame::byteToUnit(
+            bytes: $this->config['size'],
+            format: true,
+            kb: $this->translation('kb'),
+            mb: $this->translation('mb'),
+            gb: $this->translation('gb'),
+        );
+
+        // format limit
+        $fileText = $this->config['limit'] > 1 
+            ? $this->translation('files') 
+            : $this->translation('file');
+
+        $maxText = $this->translation('max');
+        $limitText = $this->translation('limit');
+        $allowedText = $this->translation('allowed_files'); 
+
+        // formatted ectensions text
+        $result = tcollect($mimeExtensions)
+                    ->map(fn($ext) => strtoupper(ltrim($ext, '.')))
+                    ->implode(', ');
+
+        return sprintf("%s %s (%s) %s", 
+            $allowedText, 
+            $result, 
+            "{$maxText} {$byteToUnit}",
+            $this->config['limit'] > 1 && $this->config['limitText']
+            ? "- ({$limitText} {$this->config['limit']} {$fileText})" 
+            : ""
+        );
     }
     
     /**
@@ -465,11 +526,11 @@ class File extends FileMethod{
     /**
      * Return validator form request
      * 
-     * @return Tamedevelopers\Validator\Validator
+     * @return \Tamedevelopers\Validator\Validator
      */
     public function form()
     {
-        return (new Validator)
+        return (new \Tamedevelopers\Validator\Validator)
                     ->token(false)
                     ->all();
     }

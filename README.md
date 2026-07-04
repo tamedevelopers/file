@@ -19,10 +19,13 @@
     * [Get Validation Message](#get-validation-message)
     * [Get Status](#get-status)
     * [Get Class](#get-class)
+    * [Get Name](#get-name)
+    * [Get Folder](#get-folder)
     * [First](#first)
     * [Get](#get)
     * [Form](#form)
     * [Unlink](#unlink)
+    * [publishJS](#publishJS)
 * [Usage](#usage)
   * [Name](#name)
   * [Driver](#driver)
@@ -219,6 +222,24 @@ $file->getStatus();
 $file = File::name('html_input_name');
 
 $file->getClass();
+```
+
+### Get Name
+- This will return the input name
+
+```php
+$file = File::name('html_input_name');
+
+$file->getName();
+```
+
+### Get Folder
+- This will return the folder uploaded path
+
+```php
+$file = File::name('html_input_name');
+
+$file->getFolder($path = null);
 ```
 
 ### First

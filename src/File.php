@@ -14,6 +14,7 @@ use Tamedevelopers\File\Traits\FilePropertyTrait;
 use Tamedevelopers\File\Traits\FileStorageTrait;
 use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Traits\FileValidatorTrait;
+use Tamedevelopers\Support\Capsule\File as TameSupportFile;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
@@ -388,6 +389,9 @@ class File extends FileMethod{
      */
     public function getValidationMessage()
     {
+        // initilize configuration if not called
+        $this->callConfigIfNotCalled();
+        
         // get mime types and extensions
         $mime = $this->mimeAndExtension(); 
 
@@ -453,16 +457,6 @@ class File extends FileMethod{
 
         return $this->success ? $this->class['success'] : null;
     }
-
-    /**
-     * Get Uploader name
-     * 
-     * @return string|null
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
     
     /**
      * Check if upload has an error
@@ -488,6 +482,27 @@ class File extends FileMethod{
     public function isCompleted()
     {
         return $this->getStatus() === 200;
+    }
+
+    /**
+     * Get Uploader name
+     * 
+     * @return string|null
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get Uploaded folder path
+     * 
+     * @param string|null $path
+     * @return string|null
+     */
+    public function getFolder($path = null)
+    {
+        return empty($path) ? $this->folder : "{$this->folder}/{$path}";
     }
 
     /**
@@ -562,6 +577,17 @@ class File extends FileMethod{
     public function echoJson(int $response = 0, $message = null)
     {
         return Tame::echoJson($response, $message);
+    }
+
+    /**
+     * Publish JavaScript code to automatically convert file inputs to support multiple files
+     * Call this method and echo the output in your HTML head or before file inputs
+     * 
+     * @return string JavaScript code
+     */
+    public function publishJS()
+    {
+        return TameSupportFile::publishJS();
     }
     
     /**

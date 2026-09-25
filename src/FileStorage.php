@@ -48,7 +48,7 @@ class FileStorage extends FileMethod{
      *
      * @var array|null
      */
-    private $driverTypes;
+    private $drivers;
     
     
     /**
@@ -58,23 +58,22 @@ class FileStorage extends FileMethod{
      * @param  mixed $config
      * @param  mixed $name
      * @param  mixed $folder
-     * @param  mixed $driverTypes
+     * @param  mixed $drivers
      * @return void
      */
-    public function __construct($file = null, $config = null, $name = null, $folder = null, $driverTypes = null)
+    public function __construct($file = null, $config = null, $name = null, $folder = null, $drivers = null)
     {
-        $this->name         = $name; 
-        $this->folder       = $folder; 
-        $this->file         = $file;
-        $this->config       = $config;
-        $this->driverTypes  = $driverTypes;
+        $this->name     = $name; 
+        $this->folder   = $folder; 
+        $this->file     = $file;
+        $this->config   = $config;
+        $this->drivers  = $drivers;
     }
     
     /**
      * Handle Request
      *
-     * @return array
-     * [fullPath, urlPath, path, tmp, name]
+     * @return array{fullPath: mixed, urlPath: mixed, path: mixed, tmp: mixed, name: mixed}
      */
     public function handle()
     {
@@ -96,7 +95,7 @@ class FileStorage extends FileMethod{
             );
 
             // initialize third-party bucket
-            $bucket = new $this->driverTypes[$driver]();
+            $bucket = new $this->drivers[$driver]();
 
             // get filename without extension
             $fileName = pathinfo($migrate['name'], PATHINFO_FILENAME);
@@ -116,8 +115,7 @@ class FileStorage extends FileMethod{
     /**
      * Migrate Data
      *
-     * @return array
-     * [fullPath, urlPath, path, tmp, name]
+     * @return array{fullPath: mixed, urlPath: mixed, path: mixed, tmp: mixed, name: mixed}
      */
     private function migrate()
     {
@@ -153,7 +151,7 @@ class FileStorage extends FileMethod{
      * Get Class Associated with drivers, for selected Cloud storage
      *
      * @param  string|null $mode
-     * @return void
+     * @return mixed
      */
     private function getCloudAssociateClass($mode = null)
     {

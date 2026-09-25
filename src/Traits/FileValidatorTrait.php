@@ -11,12 +11,12 @@ use Tamedevelopers\Support\Tame;
 
 
 /**
- * @method mixed isEmpty(mixed $name)
+ * @property mixed $cachedConfig
  * @method mixed fileIsset(mixed $name)
  * @method mixed isArray(mixed $name)
+ * @method mixed isEmpty(mixed $name)
  */
 trait FileValidatorTrait{
-
     
     /**
      * Destroy Uploaded Data that are for Cloud
@@ -35,6 +35,7 @@ trait FileValidatorTrait{
 
     /**
      * Proceed with validation
+     * 
      * @return $this
      */
     private function proceedToSave()
@@ -58,7 +59,7 @@ trait FileValidatorTrait{
                     $this->config, 
                     $this->name, 
                     $this->folder, 
-                    $this->driverTypes
+                    $this->drivers
                 );
 
                 // get data response
@@ -71,6 +72,7 @@ trait FileValidatorTrait{
 
     /**
      * Proceed with validation
+     * 
      * @return $this
      */
     private function proceedToValidate()
@@ -88,13 +90,13 @@ trait FileValidatorTrait{
         */
         if(self::isEmpty($this->name))
         {
-            /**
-            * Select file to upload. - error 401
-            */
-            if(self::fileIsset($this->name) && isset($this->error['401'])){
+            $statusCode = '401';
+
+            // Select file to upload. - error 401
+            if(self::fileIsset($this->name) && isset($this->error[$statusCode])){
                 $this->data = [
-                    'message'   => $this->translation(401),
-                    'status'    => 401,
+                    'message'   => $this->translation($statusCode),
+                    'status'    => (int) $statusCode,
                     'files'     => null,
                 ];
                 $errors[] = true;
@@ -120,12 +122,17 @@ trait FileValidatorTrait{
                 // if image width and height is allowed
                 $imageSizeAllowed = $this->validateImageDimensions($file->imageSize(), $file);
 
+                // validate mime and extension
+                $validateMime = in_array($file->mime(), $mimeTypes) 
+                    && in_array($file->extensionWithDot(), $mimeExtensions);
+
                 /**
                 * File upload is greater than allowed size of. - error 402
                 */
                 if($file->size() > $this->config['size'])
                 {
-                    if(isset($this->error['402'])){
+                    $statusCode = '402';
+                    if(isset($this->error[$statusCode])){
                         // convert size to btyes
                         $byteToUnit = Tame::byteToUnit(
                             bytes: $this->config['size'],
@@ -136,9 +143,12 @@ trait FileValidatorTrait{
                         );
     
                         $this->data = [
-                            "status"    => 402, 
-                            "message"   => sprintf("%s %s", $this->translation('402'), $byteToUnit), 
-                            "files"     => null,
+                            "status"  => (int) $statusCode, 
+                            "message" => sprintf("%s %s", 
+                                $this->translation($statusCode), 
+                                $byteToUnit
+                            ), 
+                            "files" => null,
                         ];
                         $errors[] = true;
                     }
@@ -150,15 +160,21 @@ trait FileValidatorTrait{
                 */
                 elseif($this->fileItemsDataCount() > $this->config['limit'])
                 {
-                    if(isset($this->error['403'])){
+                    $statusCode = '403';
+                    if(isset($this->error[$statusCode])){
+                        $limit = $this->config['limit'];
+                        $trans = $limit > 1 
+                            ? $this->translation('files')
+                            : $this->translation('file');
+
                         $this->data = [
-                            "status"    => 403, 
-                            "message"   => sprintf("%s %s(%s)", 
-                                $this->translation('403'), 
-                                $this->config['limit'], 
-                                $this->config['limit'] > 1 ? $this->translation('files') : $this->translation('file')
+                            "status"  => (int) $statusCode, 
+                            "message" => sprintf("%s %s(%s)", 
+                                $this->translation($statusCode), 
+                                $limit, 
+                                $trans
                             ), 
-                            "files"     => null,
+                            "files" => null,
                         ];
                         $errors[] = true;
                     }
@@ -168,12 +184,17 @@ trait FileValidatorTrait{
                 /**
                 * Uploaded file format not allowed. Allowed formats: - error 404
                 */
-                elseif(!in_array($file->mime(), $mimeTypes)){
-                    if(isset($this->error['404'])){
+                elseif($validateMime === false){
+                    $statusCode = '404';
+                    if(isset($this->error[$statusCode])){
                         $this->data = [
-                            "status"    => 404, 
-                            "message"   => sprintf("%s <br> %s %s", $file->name(), $this->translation('404'), implode(' ', $mimeExtensions)), 
-                            "file"      => null,
+                            "status"  => (int) $statusCode, 
+                            "message" => sprintf("%s <br> %s %s", 
+                                $file->name(), 
+                                $this->translation($statusCode), 
+                                implode(' ', $mimeExtensions)
+                            ), 
+                            "file" => null,
                         ];
                         $errors[] = true;
                     }
@@ -184,9 +205,10 @@ trait FileValidatorTrait{
                 * Image size error. Image dimension allowed is: - error 405
                 */
                 elseif(!$imageSizeAllowed['response']){
-                    if(isset($this->error['405'])){
+                    $statusCode = '405';
+                    if(isset($this->error[$statusCode])){
                         $this->data = [
-                            "status"    => 405,
+                            "status"    => (int) $statusCode,
                             "message"   => sprintf($imageSizeAllowed['message'], $file->name()), 
                             "file"      => null,
                         ];
@@ -232,20 +254,20 @@ trait FileValidatorTrait{
      */
     private function translation($mode = null)
     {
-        return defined('TAME_FILE_CONFIG') 
-                ? TAME_FILE_CONFIG['message'][$mode] ?? TAME_FILE_CONFIG['message'] 
-                : null;
+        $cached = static::$cachedConfig;
+
+        return !empty($cached)
+            ? $cached['message'][$mode] ?? $cached['message'] 
+            : null;
     }
     
     /**
      * Call config method if not called
-     *
-     * @return void
      */
-    private function callConfigIfNotCalled()
+    private function callConfigIfNotCalled(): void
     {
         // define constant to hold global error handler
-        if(!defined('TAME_FILE_CONFIG')){
+        if(empty(static::$cachedConfig)){
             $this->globalConfig();
 
             // merge with default data
@@ -255,19 +277,16 @@ trait FileValidatorTrait{
             $this->config = $this->dataMerge();
 
             // class
-            $this->class = TAME_FILE_CONFIG['class'];
+            $this->class = static::$cachedConfig['class'];
         }
     }
     
     /**
      * Merge Data only when it's value is not empty
-     *
-     * @return array
      */
-    private function dataMerge()
+    private function dataMerge(): array
     {
-        // default data from `TAME_FILE_CONFIG`
-        $config = array_merge($this->config, TAME_FILE_CONFIG['config']);
+        $config = array_merge($this->config, static::$cachedConfig['config']);
 
         // Merge config only when custom setting is not empty
         foreach ($this->config as $key => $value) {
@@ -281,20 +300,16 @@ trait FileValidatorTrait{
     
     /**
      * Count items Total
-     *
-     * @return int
      */
-    private function fileItemsDataCount()
+    private function fileItemsDataCount(): int
     {
         return count($this->fileItemsData());
     }
     
     /**
      * Return file `items` data to be validated
-     *
-     * @return mixed
      */
-    private function fileItemsData()
+    private function fileItemsData(): mixed
     {
         return $this->files[$this->name];
     }
@@ -334,11 +349,11 @@ trait FileValidatorTrait{
     /**
      * Check if image width and height is allowed
      *
-     * @param   array $size ['width' => int, 'height' => int]
-     * @param   mixed $file
+     * @param array{'width': int, 'height': int} $size 
+     * @param mixed $file
      * @return array
      */
-    private function validateImageDimensions($size = [], $file)
+    private function validateImageDimensions($size = [], $file = null)
     {
         // Check if config width and height is not empty
         $config = $this->config;
@@ -452,17 +467,19 @@ trait FileValidatorTrait{
     {
         $default = $this->allowedMimeType();
 
-        // get filter if any or set to empty array
+        // Get filters if any or set to empty array
         $filter = $this->config['filter'] ?? [];
 
+        // Get extensions if any or set to empty array
+        $extension = $this->config['extension'] ?? [];
+
         // allowed mime types after excluding filter types
-        $mt = $this->excludeTypes($filter); 
+        $filteredMime = $this->excludeTypes($filter); 
+        $mime = $this->includeTypes($extension, $filteredMime); 
 
         // Mime types
-        $mimeTypes = $mt['mime'][$this->config['mime']] ?? $default['mime']['image'];
-
-        // mimeExtensions
-        $mimeExtensions = $mt['extension'][$this->config['mime']]  ?? $default['extension']['image'];
+        $mimeTypes = $mime['mime'][$this->config['mime']] ?? $default['mime']['image'];
+        $mimeExtensions = $mime['extension'][$this->config['mime']]  ?? $default['extension']['image'];
 
         return [
             'mimeTypes'        => $mimeTypes,

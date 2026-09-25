@@ -8,32 +8,33 @@ use Tamedevelopers\File\FileHelper;
 use Tamedevelopers\Support\Collections\Collection;
 
 
+/**
+ * @property  mixed $file
+ */
 abstract class FileMethod{
     
     /**
      * Check if File Input is set
      *
-     * @param string $name
+     * @param string|null $name
      * @return bool
      */
-    static public function fileIsset($name)
+    static public function fileIsset($name = null)
     {
-        if(isset($_FILES[$name])){
-            return true;
-        }
-
-        return false;
+        return isset($_FILES[self::getFileName($name)]);
     }
     
     /**
      * Check if File Input is not empty
      *
-     * @param string $name
+     * @param string|null $name
      * @return bool
      */
-    static public function notEmpty($name)
+    static public function notEmpty($name = null)
     {
-        if(isset($_FILES[$name]) && !empty($_FILES[$name]['name'][0])){
+        $fileName = self::getFileName($name);
+
+        if(isset($_FILES[$fileName]) && !empty($_FILES[$fileName]['name'][0])){
             return true;
         }
 
@@ -43,10 +44,10 @@ abstract class FileMethod{
     /**
      * Check if File Input is Empty
      *
-     * @param string $name
+     * @param string|null $name
      * @return bool
      */
-    static public function isEmpty($name)
+    static public function isEmpty($name = null)
     {
         return ! self::notEmpty($name);
     }
@@ -54,10 +55,10 @@ abstract class FileMethod{
     /**
      * Check if File Input not empty
      *
-     * @param string $name
+     * @param string|null $name
      * @return bool
      */
-    static public function isNotEmpty($name)
+    static public function isNotEmpty($name = null)
     {
         return self::notEmpty($name);
     }
@@ -65,12 +66,25 @@ abstract class FileMethod{
     /**
      * Check if File Input not empty
      *
-     * @param string $name
+     * @param string|null $name
      * @return bool
      */
-    static public function has($name)
+    static public function has($name = null)
     {
         return self::notEmpty($name);
+    }
+
+    /**
+     * Get File Name
+     *
+     * @param string|null $name
+     * @return string|null
+     */
+    static protected function getFileName($name = null)
+    {
+        return empty($name) 
+            ? static::$file->getName()
+            : $name;
     }
      
     /**
@@ -338,31 +352,66 @@ abstract class FileMethod{
      * Exclude mime types and extensions by raw extension keys (e.g. png, pdf)
      *
      * @param array $extensions
+     * @param array $mimeTypes
      * @return array
      */
-    protected static function excludeTypes(array $extensions): array
+    protected static function excludeTypes($extensions, $mimeTypes = [])
     {
-        $allowed = static::allowedMimeType();
+        return static::filterTypes($extensions, $mimeTypes, true);
+    }
+
+    /**
+     * Include only specific mime types and extensions by raw extension keys (e.g. png, pdf)
+     * 
+     * @param array $extensions
+     * @param array $mimeTypes
+     * @return array
+     */
+    protected static function includeTypes($extensions, $mimeTypes = [])
+    {
+        return static::filterTypes($extensions, $mimeTypes, false);
+    }
+
+    /**
+     * Filter mime types and extensions for the configured mime group.
+     *
+     * @param array $extensions Raw extensions without dots (e.g., ['png', 'pdf'])
+     * @param array $mimeTypes
+     * @param bool $isExclude True to exclude, false to include
+     * @return array
+     */
+    protected static function filterTypes($extensions, $mimeTypes = [], $isExclude = true)
+    {
+        $allowed = !empty($mimeTypes) ? $mimeTypes : static::allowedMimeType();
         $types   = static::baseTypes();
+        $mime    = static::$file->config['mime'] ?? null;
 
-        $excludeExt  = [];
-        $excludeMime = [];
+        // If configured mime group doesn't exist, return base allowed types
+        if (!$mime || !isset($allowed['extension'][$mime])) {
+            return $allowed;
+        }
 
+        $targetExts  = [];
+        $targetMimes = [];
+
+        // Collect matching extensions and MIME types directly
         foreach ($types as $type) {
             foreach ($type['map'] as $ext => $mimes) {
                 if (in_array($ext, $extensions, true)) {
-                    $excludeExt[]  = '.' . $ext;
-                    $excludeMime = array_merge($excludeMime, $mimes);
+                    $targetExts[] = '.' . $ext;
+                    $targetMimes  = array_merge($targetMimes, $mimes);
                 }
             }
         }
 
-        foreach ($allowed['extension'] as $group => $exts) {
-            $allowed['extension'][$group] = array_values(array_diff($exts, $excludeExt));
-        }
-
-        foreach ($allowed['mime'] as $group => $mimes) {
-            $allowed['mime'][$group] = array_values(array_diff($mimes, $excludeMime));
+        if ($isExclude) {
+            // Exclude specified extensions and mimes
+            $allowed['extension'][$mime] = array_values(array_diff($allowed['extension'][$mime], $targetExts));
+            $allowed['mime'][$mime]      = array_values(array_diff($allowed['mime'][$mime], $targetMimes));
+        } else {
+            // Merge and de-duplicate to append target extensions into the active mime group
+            $allowed['extension'][$mime] = array_values(array_unique(array_merge($allowed['extension'][$mime], $targetExts)));
+            $allowed['mime'][$mime]      = array_values(array_unique(array_merge($allowed['mime'][$mime], $targetMimes)));
         }
 
         return $allowed;

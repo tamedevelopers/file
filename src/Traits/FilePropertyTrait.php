@@ -16,6 +16,13 @@ trait FilePropertyTrait{
     protected $name;
 
     /**
+     * Self instance data
+     *
+     * @var mixed
+     */
+    protected static $file;
+
+    /**
      * File data
      *
      * @var mixed
@@ -40,20 +47,20 @@ trait FilePropertyTrait{
      *
      * @var bool
      */
-    private $success = false;
+    protected $success = false;
     
     /**
      * Keep track of manually calling the validate method
      *
      * @var bool
      */
-    private $isValidatedCalled = false;
+    protected $isValidatedCalled = false;
     
     /**
      * All available drivers
      * @var array
      */
-    public $driverTypes = [
+    public $drivers = [
         'local' => File::class,
         's3'    => AmazonS3::class,
     ];
@@ -62,7 +69,7 @@ trait FilePropertyTrait{
      * Data response
      * @var array
      */
-    private $data = [
+    protected $data = [
         'message'   => '',
         'status'    => 0,
     ];
@@ -89,7 +96,7 @@ trait FilePropertyTrait{
      * Private Errors for internal usage
      * @var array
      */
-    private $error = [
+    protected $error = [
         '401' => 401,
         '402' => 402,
         '403' => 403,
@@ -102,8 +109,15 @@ trait FilePropertyTrait{
      * Css Class Error handler
      * @var array
      */
-    private $class = [
+    protected $class = [
         'error'     => 'bg-danger',
         'success'   => 'bg-success',
     ];
+
+    /**
+     * Cached Configuration
+     * @var array
+     */
+    protected static $cachedConfig = null;
+
 }

@@ -79,7 +79,7 @@ trait FileMagicTrait{
     {
         if(!$this->isLocalDriver()){
             // initialize third-party bucket
-            $bucket = new $this->object->driverTypes[$this->config['driver']]();
+            $bucket = new $this->object->drivers[$this->config['driver']]();
 
             // get filename without extension
             $fileName = pathinfo($upload['name'], PATHINFO_FILENAME);
@@ -106,7 +106,7 @@ trait FileMagicTrait{
      * Load an image from a file path and return the image resource.
      *
      * @param  array $upload
-     * @return array|false
+     * @return mixed
      */
     private function getImageResource($upload)
     {
@@ -116,9 +116,9 @@ trait FileMagicTrait{
     /**
      * Load an image from a file path and return the image resource.
      *
-     * @param  array $upload
-     * @param  array $file
-     * @return array|false
+     * @param  array $imageSource
+     * @param  mixed $path
+     * @return resource|\GdImage|false
      */
     private function createGDImage($imageSource, $path)
     {
@@ -144,12 +144,9 @@ trait FileMagicTrait{
     }
     
     /**
-     * Remove Temp File From Server 
-     * - Only when driver is not `local`
-     *
-     * @return void
+     * Remove Temp File From Server     Only when driver is not `local`
      */
-    private function removeTempFile()
+    private function removeTempFile(): void
     {
         if(!$this->isLocalDriver()){
             @unlink($this->uploads['fullPath']);

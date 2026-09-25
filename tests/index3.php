@@ -23,6 +23,7 @@ config_file(
 $upload = File::name('avatar')
             ->folder('upload')
             ->generate(false)
+            ->limit(2)
             ->size('10.5mb') // override global settings
             ->mime('image')
             ->validate()
@@ -73,7 +74,12 @@ $upload = File::name('avatar')
                 <!--file upload-->
                 <div class="col-sm-12 mt-3">
                     <div class="form-group">
-                        <label for="upload">Image</label>
+                        <label for="upload" style="display: block; margin-bottom: 10px;">
+                            Image
+                            <span style="display: block; font-size: 14px;">
+                                <?= $upload->getValidationMessage() ?>
+                            </span>
+                        </label>
                         <input type="file" class="form-control-file" id="upload" 
                                 name="avatar[]" multiple>
                     </div>

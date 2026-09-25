@@ -54,18 +54,22 @@ class File extends FileMethod{
         if(!empty($files)){
             $this->files = $files;
         }
+
+        if(!empty($this->name)){
+            self::$file = $this;
+        }
     }
     
     /**
      * Initiliaze File Upload Using `name`
      *
-     * @param  string|null $name
+     * @param  string|null $fileName
      * @return $this
      */
-    static public function name($name = null)
+    static public function name($fileName = null)
     {
         return new static(
-            $name,
+            $fileName,
             self::convertToFileHelper()
         );
     }
@@ -104,8 +108,7 @@ class File extends FileMethod{
                 $this->folder = '';
             }
 
-            $this->proceedToSave()
-                    ->callback($closure);
+            $this->proceedToSave()->callback($closure);
         }
 
         return $this;
@@ -115,10 +118,7 @@ class File extends FileMethod{
      * Begin Image watermark
      *
      * @param string $watermarkSource The path to the watermark image.
-     * 
-     * @param string $position The position of the watermark. - Default is 'bottom-right'
-     * ['center', 'bottom-right', 'bottom-left', 'top-right', 'top-left']
-     * 
+     * @param 'center'|'bottom-right'|'bottom-left'|'top-right'|'top-left' $position  The position of the watermark. Default is 'bottom-right'
      * @param  int $padding Padding in pixels (applied to all positions except 'center')
      * 
      * @return $this
@@ -160,18 +160,10 @@ class File extends FileMethod{
 
         return $this;
     }
-    
-    /**
-     * Resize an image based on width and/or height.
-     *
-     * @param int|null $width The desired width of the resized image (in pixels).
-     * @param int|null $height The desired height of the resized image (in pixels).
-     * 
-     * @return $this
-     */
 
     /**
      * Compress an image file.
+     * 
      * @return $this
      */
     public function compress()
@@ -227,7 +219,7 @@ class File extends FileMethod{
     /**
      * Change driver type
      *
-     * @param string $driver
+     * @param 'local'|'s3' $driver
      * @return $this
      */
     public function driver($driver)
@@ -236,7 +228,7 @@ class File extends FileMethod{
         $driver = Str::lower($driver);
 
         // only change the default driver if found
-        if(in_array($driver, array_keys($this->driverTypes))){
+        if(in_array($driver, array_keys($this->drivers))){
             $this->config['driver'] = $driver;
         }
 
@@ -259,9 +251,7 @@ class File extends FileMethod{
     /**
      * Set Structure Creation
      *
-     * @param string $structure
-     * - [default, year, month, day]
-     * 
+     * @param 'default'|'year'|'month'|'day' $structure
      * @return $this
      */
     public function structure($structure)
@@ -274,9 +264,7 @@ class File extends FileMethod{
     /**
      * Upload size in mb
      *
-     * @param  int|string $size
-     * - [optional] Default is (2mb)
-     * 
+     * @param  int|string $size     Default is (2mb)
      * @return $this
      */
     public function size($size)
@@ -320,9 +308,7 @@ class File extends FileMethod{
      * Set width
      *
      * @param  int|string $width
-     * @param  bool $actual
-     * - [optional] Set to false will make size equal to or greather than
-     * 
+     * @param  bool $actual     False will make size equal to or greather than
      * @return $this
      */
     public function width($width, ?bool $actual = true)
@@ -339,9 +325,7 @@ class File extends FileMethod{
      * Set Height
      *
      * @param  int|string $height
-     * @param  bool $actual
-     * - [optional] Set to false will make size equal to or greather than
-     * 
+     * @param  bool $actual     False will make size equal to or greather than
      * @return $this
      */
     public function height($height, ?bool $actual = true)
@@ -357,9 +341,7 @@ class File extends FileMethod{
     /**
      * Set Mime Type
      *
-     * @param  string $mime
-     * - [video|audio|file|image|zip|pdf|xls|doc|general_image|general_media|general_file] 
-     * 
+     * @param  'video'|'audio'|'file'|'image'|'zip'|'pdf'|'xls'|'doc'|'general_image'|'general_media'|'general_file' $mime
      * @return $this
      */
     public function mime($mime)
@@ -371,8 +353,8 @@ class File extends FileMethod{
     
     /**
      * Get Error Message
-     * @param  string $message
      * 
+     * @param  string|null $message
      * @return string
      */
     public function getMessage($message = null)
@@ -384,10 +366,8 @@ class File extends FileMethod{
 
     /**
      * Get Error Validation Message
-     * 
-     * @return string
      */
-    public function getValidationMessage()
+    public function getValidationMessage(): string
     {
         // initilize configuration if not called
         $this->callConfigIfNotCalled();
@@ -436,38 +416,31 @@ class File extends FileMethod{
     
     /**
      * Get Status Code
-     *
-     * @return int
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return (int) $this->data['status'];
     }
     
     /**
      * Get Class Error
-     *
-     * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         if($this->hasError()){
             return $this->class['error'];
         }
 
-        return $this->success ? $this->class['success'] : null;
+        return $this->success ? $this->class['success'] : '';
     }
     
     /**
      * Check if upload has an error
-     *
-     * @return bool
      */
-    public function hasError()
+    public function hasError(): bool
     {
         $status = $this->getStatus();
-        if(!empty($status) && !in_array($status, [0, 200]))
-        {
+        if(!empty($status) && !in_array($status, [0, 200])){
             return true;
         }
 
@@ -476,20 +449,16 @@ class File extends FileMethod{
     
     /**
      * Check if file has been uploaded
-     *
-     * @return bool
      */
-    public function isCompleted()
+    public function isCompleted(): bool
     {
         return $this->getStatus() === 200;
     }
 
     /**
      * Get Uploader name
-     * 
-     * @return string|null
      */
-    public function getName()
+    public function getName(): string|null
     {
         return $this->name;
     }
@@ -502,15 +471,21 @@ class File extends FileMethod{
      */
     public function getFolder($path = null)
     {
-        return empty($path) ? $this->folder : "{$this->folder}/{$path}";
+        if(empty($path)){
+            return $this->folder;
+        }
+
+        if(is_array($path)){
+            $path = Str::head($path);
+        }
+        
+        return "{$this->folder}/{$path}";
     }
 
     /**
      * Get First Element of Uploads
      * 
-     * @param string|null $mode
-     * - [name, path, url]
-     * 
+     * @param 'name'|'path'|'url'|null $mode
      * @return array|string|null
      */
     public function first($mode = null)
@@ -523,9 +498,7 @@ class File extends FileMethod{
     /**
      * Get all Element of Uploads
      * 
-     * @param string|null $mode
-     * - [name, path, url]
-     * 
+     * @param 'name'|'path'|'url'|null $mode
      * @return array|null
      */
     public function get($mode = null)
@@ -546,20 +519,15 @@ class File extends FileMethod{
     public function form()
     {
         return (new \Tamedevelopers\Validator\Validator)
-                    ->token(false)
-                    ->all();
+            ->token(false)
+            ->all();
     }
 
     /**
      * Unlink File from Server
      *
-     * @param string $pathToFile
-     * - [full path to file is required]
-     * 
-     * @param string|null $restrictedfileName
-     * - [optional] file name. <avatar.png> 
-     * - File to check against before unlinking
-     * 
+     * @param string $pathToFile    Full path to file is required
+     * @param string|null $restrictedfileName   File to check against before unlinking
      * @return void
      */
     static public function unlink(string $pathToFile, $restrictedfileName = null)
@@ -592,18 +560,16 @@ class File extends FileMethod{
     
     /**
      * Get Error Data
-     * @return array
      */
-    public function getError()
+    public function getError(): array
     {
         return $this->error;
     }
     
     /**
      * Get Config Data
-     * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }

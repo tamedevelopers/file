@@ -28,10 +28,8 @@ class FileHelper extends FileMethod{
     
     /**
      * Get File Extension
-     *
-     * @return string
      */
-    public function extension()
+    public function extension(): string
     {
         return Str::lower(pathinfo(
             $this->data['full_path'], 
@@ -40,42 +38,41 @@ class FileHelper extends FileMethod{
     }
     
     /**
-     * Get Temporary Path
-     *
-     * @return string
+     * Get File Extension with dot (.jpg)
      */
-    public function tmp()
+    public function extensionWithDot(): string
+    {
+        return ".{$this->extension()}";
+    }
+    
+    /**
+     * Get Temporary Path
+     */
+    public function tmp(): string
     {
         return $this->data['tmp_name'] ?? 'null';
     }
     
     /**
      * Get File Type
-     *
-     * @return string
      */
-    public function type()
+    public function type(): string
     {
         return $this->data['type'];
     }
     
     /**
      * Get File Name
-     *
-     * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->data['full_path'];
     }
         
     /**
      * Get File MimeType
-     *
-     * @return string|bool
-     * - false if not found
      */
-    public function mime()
+    public function mime(): string|bool
     {
         return Str::lower(@mime_content_type(
             $this->tmp()
@@ -84,10 +81,8 @@ class FileHelper extends FileMethod{
 
     /**
      * Get File Size
-     * 
-     * @return int
      */
-    public function size()
+    public function size(): int
     {
         return $this->data['size'];
     }
@@ -95,8 +90,7 @@ class FileHelper extends FileMethod{
     /**
      * Get Image Size
      * 
-     * @return array
-     * [width, height]
+     * @return array{width: mixed, height: mixed}
      */
     public function imageSize()
     {
@@ -120,7 +114,6 @@ class FileHelper extends FileMethod{
      * This helps prevent spoofed extensions (e.g. renamed .exe to .jpg).
      *
      * @return bool
-     *  True if the file is a valid image, otherwise false.
      */
     public function isImage()
     {
@@ -134,8 +127,7 @@ class FileHelper extends FileMethod{
      * Generate new file
      *
      * @param  bool $allow
-     * @return string
-     * - Generated Filename
+     * @return string       Generated Filename
      */
     public function generate(?bool $allow = true)
     {

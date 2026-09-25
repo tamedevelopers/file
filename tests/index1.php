@@ -21,7 +21,9 @@ config_file(
 // When using `save()` and `validate()` method.
 $upload = File::name('avatar')
                 // ->folder('upload/transaction')
-                ->size('500kb')
+                ->size('500.90kb')
+                ->limit(3)
+                ->limitText(false)
                 ->generate(false)
                 ->filterExtention(['png'])
                 ->save(function($response){
@@ -65,9 +67,15 @@ $upload = File::name('avatar')
             <!--file upload-->
             <div class="col-sm-12 mt-3" style="margin: 0 0 30px;">
                 <div class="form-group">
-                    <label for="upload">Image Avatar</label>
-                    <input type="file" class="form-control-file" id="upload" 
-                            name="avatar">
+                    <label for="upload" style="display: block; margin-bottom: 10px;">
+                        Image Avatar
+                        <span style="display: block; font-size: 14px;">
+                            <?= $upload->getValidationMessage() ?>
+                        </span>
+                    </label>
+                    <input type="file" class="form-control-file" 
+                        id="upload" 
+                        name="avatar">
                 </div>
             </div>
             

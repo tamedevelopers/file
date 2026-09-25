@@ -467,7 +467,7 @@ $upload = File::name('avatar')
             ->limit(5)
             ->limitText(true);
 
-// If limit is more then 1, the limit text automatically shows to users
+// If limit is more than 1, the limit text automatically shows to users
 
 $upload->getValidationMessage() // Allowed Files: JPG, JPEG, PNG, GIF (Max: 3mb) - (Limit: 5 files)
 ```

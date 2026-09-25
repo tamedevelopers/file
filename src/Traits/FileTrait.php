@@ -9,7 +9,9 @@ use Tamedevelopers\Support\Tame;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Capsule\Forge;
 
-
+/**
+ * @property mixed $cachedConfig
+ */
 trait FileTrait{
 
     /**
@@ -23,7 +25,7 @@ trait FileTrait{
     public function globalConfig($message = [], $config = [], $class = [])
     {
         // define constant to hold global error handler
-        if(!defined('TAME_FILE_CONFIG')){
+        if(empty(static::$cachedConfig)){
 
             // create message
             $message = $message + [
@@ -87,7 +89,7 @@ trait FileTrait{
 
             // check for valid driver type
             // only change the default driver if found
-            if(in_array($config['driver'], array_keys($this->driverTypes)))
+            if(in_array($config['driver'], array_keys($this->drivers)))
             {
                 $config['driver'] = $config['driver'];
             }
@@ -100,15 +102,14 @@ trait FileTrait{
             ];
 
             // define global config
-            define('TAME_FILE_CONFIG', $default);
+            static::$cachedConfig = $default;
         }
     }
 
     /**
      * Remove unwanted Filter response status code
      *
-     * @param  array $filter
-     * Possible status code: [401, 402, 403, 404, 405, 200]
+     * @param  401|402|403|404|405|200|array $filter
      * 
      * 401 => Select file to upload",
      * 402 => File upload is greater than allowed size of",
@@ -143,7 +144,7 @@ trait FileTrait{
     /**
      * Filter Extension Type (remove unwanted extensions) Extension you do not want to allow
      *
-     * @param  mixed ...$extension
+     * @param  string|array ...$extension       By raw extension keys (e.g. png, pdf)
      * @return $this
      */
     public function filterExtention(...$extension)
@@ -162,12 +163,31 @@ trait FileTrait{
     }
 
     /**
+     * Add Extension Type (add extra extensions) Extension you want to allow
+     *
+     * @param  string|array ...$extension      By raw extension keys (e.g. png, pdf)
+     * @return $this
+     */
+    public function addExtention(...$extension)
+    {
+        // flattern all into one array element
+        $extension = Forge::flattenValue($extension);
+
+        // clean any leading (dot) and convert to lowercase
+        $extension = array_map(function ($value) {
+            return Str::lower(ltrim($value, '.')); 
+        }, $extension);
+        
+        $this->config['extension'] = $extension;
+
+        return $this;
+    }
+
+    /**
      * Uploaded Image Size
      *
      * @param mixed $name
-     * 
-     * @return array
-     * [width, height]
+     * @return array{width: mixed, height: mixed}
      */
     public function imageSize($name = null)
     {
@@ -190,9 +210,7 @@ trait FileTrait{
      * Get Image Attributes
      *
      * @param string|null $sourcePath
-     * 
-     * @return array
-     * [width, height]
+     * @return array{width: mixed, height: mixed}
      */
     public function getImageSize($sourcePath = null)
     {
@@ -209,9 +227,7 @@ trait FileTrait{
      * Get Mime Type
      *
      * @param string|null $sourcePath
-     * 
      * @return bool|string
-     * - false on error
      */
     public function getMimeType($sourcePath = null)
     {

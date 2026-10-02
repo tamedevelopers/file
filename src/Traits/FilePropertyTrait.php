@@ -16,16 +16,9 @@ trait FilePropertyTrait{
     protected $name;
 
     /**
-     * Self instance data
-     *
-     * @var mixed
-     */
-    protected static $file;
-
-    /**
      * File data
      *
-     * @var mixed
+     * @var null|\Tamedevelopers\Support\Capsule\FileBag
      */
     protected $files;
 

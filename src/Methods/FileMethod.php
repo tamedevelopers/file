@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Methods;
 
-use Tamedevelopers\File\FileHelper;
-use Tamedevelopers\Support\Collections\Collection;
-
-
 /**
  * @property  mixed $file
  */
@@ -22,6 +18,17 @@ abstract class FileMethod{
     static public function fileIsset($name = null)
     {
         return isset($_FILES[self::getFileName($name)]);
+    }
+    
+    /**
+     * Alias for fileIsset
+     *
+     * @param string|null $name
+     * @return bool
+     */
+    static public function isset($name = null)
+    {
+        return self::fileIsset($name);
     }
     
     /**
@@ -117,75 +124,6 @@ abstract class FileMethod{
 
             return $files;
         }
-    }
-    
-    /**
-     * Rearrange File
-     *
-     * @param  mixed $files
-     * @return array
-     */
-    static protected function rearrangeFiles($files)
-    {
-        $rearrangedFiles = [];
-
-        // we loop through the main $_FILES
-        foreach ($files as $fileKey => $fileData) {
-
-            // loop through it's data, which is an array as well
-            foreach ($fileData as $index => $value) {
-
-                // first we'll check if the value is an array
-                // form input becomes an array when selecting multiple
-                // name="input[]"
-                if(self::isArray($value)){
-
-                    // arrange the file data by index counter
-                    for($i = 0; $i < count($value); $i++) {
-                        $rearrangedFiles[$fileKey][$i][$index] = $value[$i];
-                    }
-
-                } else{
-                    $rearrangedFiles[$fileKey][0] = $fileData;
-                }
-            }
-        }
-
-        return $rearrangedFiles;
-    }
-    
-    /**
-     * Convert To File Helper Object
-     * 
-     * @return mixed
-     */
-    static protected function convertToFileHelper()
-    {
-        $arrangedFiles = self::rearrangeFiles($_FILES);
-
-        $convertedFiles = [];
-
-        // Now we are looping through the already arranged files
-        foreach ($arrangedFiles as $fileKey => $fileData) {
-
-            // lets check if the array is greater than 1
-            // if the count is more than one element in the array
-            // this means we have multiple array, in it's collection
-            // else we convert from index to parent FileHelper
-            if(count($fileData) > 1){
-                // loop through it's data
-                foreach ($fileData as $index => $value) {
-                    $convertedFiles[$fileKey][$index] = new FileHelper($value);
-                }
-            } else{
-                // if upload is not empty
-                if(!empty($fileData[0]['name'])){
-                    $convertedFiles[$fileKey][0]  = new FileHelper($fileData[0]);
-                }
-            }
-        }
-        
-        return new Collection($convertedFiles);
     }
     
     /**

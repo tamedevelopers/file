@@ -2,6 +2,7 @@
 
 use Tamedevelopers\File\File;
 use Tamedevelopers\Support\Env;
+use Tamedevelopers\Support\Capsule\FileBag;
 
 
 //on using comoposer autoload
@@ -12,7 +13,7 @@ include_once __DIR__  . "/../vendor/autoload.php";
 config_file(
     config: [
         'size' => '3mb',
-        'baseDir' => '/' // root directory
+        'baseDir' => '/public' // root directory
     ],
     class: [
         'error'   => 'background: #f7b9b9; margin: 0 auto 50px; width: 100%; max-width: 600px; padding: 20px; font-size: 18px',
@@ -21,7 +22,7 @@ config_file(
 );
 
 $upload = File::name('avatar')
-            ->folder('upload')
+            // ->folder('upload')
             ->generate(false)
             ->limit(2)
             ->size('10.5mb') // override global settings
@@ -37,8 +38,8 @@ $upload = File::name('avatar')
                 // );
 
                 $response
-                ->watermark('tests/watermark.png', 'top right', 20)
-                    ->resize(400, 400)
+                    ->resize(400, 400, true)
+                    ->watermark('tests/watermark.png', 'top right', 20)
                     ->compress()
                     ;
             });
@@ -52,6 +53,9 @@ $upload = File::name('avatar')
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <?= FileBag::publishJS(); ?>
+    <?= FileBag::publishMaxSizeJS(); ?>
 </head>
 <body>
     <center>
@@ -64,9 +68,13 @@ $upload = File::name('avatar')
                     <?php if($upload->hasError()) {?>
                         <?= $upload->getMessage(); ?>
                     <?php } elseif($upload->isCompleted())  {?>
-                        <a href="<?= $upload->first('url'); ?>" target="_blank">
-                            Preview Data
-                        </a>
+                        <?php foreach($upload->get() as $file): ?>
+                            <a href="<?= $file['url']; ?>" 
+                                target="_blank" 
+                                style="display: block;">
+                                Preview Data [<?= $file['name'] ?>]
+                            </a>
+                        <?php endforeach; ?>
                     <?php } ?>
                     
                 </div>

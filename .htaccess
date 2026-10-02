@@ -1,0 +1,2 @@
+# Limit upload payload to 20MB (in bytes)
+# LimitRequestBody 20971520

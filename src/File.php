@@ -14,7 +14,7 @@ use Tamedevelopers\File\Traits\FilePropertyTrait;
 use Tamedevelopers\File\Traits\FileStorageTrait;
 use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Traits\FileValidatorTrait;
-use Tamedevelopers\Support\Capsule\File as TameSupportFile;
+use Tamedevelopers\Support\Capsule\FileBag;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Str;
 use Tamedevelopers\Support\Tame;
@@ -25,7 +25,7 @@ use Tamedevelopers\Support\Tame;
  *
  * @package   tamedevelopers\file
  * @author    Tame Developers <tamedevelopers@gmail.com>
- * @copyright 2021-2023 Tame Developers
+ * @copyright 2021-2026 Tame Developers
  * @license   http://www.opensource.org/licenses/MIT The MIT License
  * @link https://github.com/tamedevelopers/file
  */
@@ -49,14 +49,7 @@ class File extends FileMethod{
     {
         if(!empty($name)){
             $this->name = $name;
-        }
-
-        if(!empty($files)){
-            $this->files = $files;
-        }
-
-        if(!empty($this->name)){
-            self::$file = $this;
+            $this->files = FileBag::collect($name);
         }
     }
     
@@ -68,10 +61,7 @@ class File extends FileMethod{
      */
     static public function name($fileName = null)
     {
-        return new static(
-            $fileName,
-            self::convertToFileHelper()
-        );
+        return new static($fileName);
     }
 
     /**
@@ -118,7 +108,7 @@ class File extends FileMethod{
      * Begin Image watermark
      *
      * @param string $watermarkSource The path to the watermark image.
-     * @param 'center'|'bottom-right'|'bottom-left'|'top-right'|'top-left' $position  The position of the watermark. Default is 'bottom-right'
+     * @param 'center'|'bottom-right'|'bottom-left'|'top-right'|'top-left' $position  Default is 'bottom-right'
      * @param  int $padding Padding in pixels (applied to all positions except 'center')
      * 
      * @return $this
@@ -143,12 +133,12 @@ class File extends FileMethod{
     /**
      * Resize an image based on width and/or height.
      *
-     * @param int|null $width The desired width of the resized image (in pixels).
-     * @param int|null $height The desired height of the resized image (in pixels).
-     * 
+     * @param int|null $width   The desired width of the resized image (in pixels).
+     * @param int|null $height  The desired height of the resized image (in pixels).
+     * @param bool $equalResize Force exact target dimensions (center-cropped cover) if true.
      * @return $this
      */
-    public function resize($width = null, $height = null)
+    public function resize($width = null, $height = null, $equalResize = false)
     {
         $resize = new ImageAutoresize(
             object: $this, 
@@ -156,7 +146,7 @@ class File extends FileMethod{
             files:  $this->files,
         );
 
-        $resize->resize($width, $height);
+        $resize->resize($width, $height, $equalResize);
 
         return $this;
     }
@@ -264,7 +254,7 @@ class File extends FileMethod{
     /**
      * Upload size in mb
      *
-     * @param  int|string $size     Default is (2mb)
+     * @param  int|string $size  Default is (2mb)
      * @return $this
      */
     public function size($size)
@@ -302,6 +292,17 @@ class File extends FileMethod{
         $this->config['limitText'] = $show;
 
         return $this;
+    }
+     
+    /**
+     * ALlias of limitText
+     *
+     * @param  bool $show
+     * @return $this
+     */
+    public function showLimitText($show = true)
+    {
+        return $this->limitText($show);
     }
     
     /**
@@ -508,7 +509,7 @@ class File extends FileMethod{
             return $data;
         }
 
-        return array_column($data, $mode);
+        return array_column($data ?: [], $mode);
     }
 
     /**
@@ -555,7 +556,7 @@ class File extends FileMethod{
      */
     public function publishJS()
     {
-        return TameSupportFile::publishJS();
+        return FileBag::publishJS();
     }
     
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Traits;
 
-
 use Closure;
 use Tamedevelopers\File\FileStorage;
 use Tamedevelopers\Support\Tame;
@@ -12,9 +11,7 @@ use Tamedevelopers\Support\Tame;
 
 /**
  * @property mixed $cachedConfig
- * @method mixed fileIsset(mixed $name)
  * @method mixed isArray(mixed $name)
- * @method mixed isEmpty(mixed $name)
  */
 trait FileValidatorTrait{
     
@@ -40,18 +37,15 @@ trait FileValidatorTrait{
      */
     private function proceedToSave()
     {
-        // file data
-        $fileItems = $this->fileItemsData();
-
         // change the correct uploaded message
         $this->data["message"] = $this->translation('200');
 
         // check if file item is true 
         // and count is more than 0
-        if(is_array($fileItems) && count($fileItems) > 0){
+        if($this->files->valid()->count() > 0){
 
-            // loop through each fileHelper element
-            foreach($fileItems as $file){
+            // look through each file and save to storage
+            foreach($this->files->get() as $file){
 
                 // instance of File Storage
                 $storage = new FileStorage(
@@ -71,7 +65,20 @@ trait FileValidatorTrait{
     }
 
     /**
-     * Proceed with validation
+     * Proceed with file validation
+     * 
+     * On file validation, check if file is empty or not
+     * If file is empty, return error 401
+     * If file is not empty, proceed to validate the file
+     * If file is not empty, check if file size is greater than allowed size
+     * If file size is greater than allowed size, return error 402
+     * If file size is not greater than allowed size, check if file count is greater than allowed count
+     * If file count is greater than allowed count, return error 403
+     * If file count is not greater than allowed count, check if file mime type is allowed
+     * If file mime type is not allowed, return error 404
+     * If file mime type is allowed, check if image width and height is allowed
+     * If image width and height is not allowed, return error 405
+     * If image width and height is allowed, proceed to save the file
      * 
      * @return $this
      */
@@ -86,14 +93,14 @@ trait FileValidatorTrait{
         $this->callConfigIfNotCalled();
 
         /**
-        * When form has not been submitted, request will be empty
+        * Check if file is empty. - error 401
         */
-        if(self::isEmpty($this->name))
+        if($this->files->valid()->isEmpty())
         {
             $statusCode = '401';
 
             // Select file to upload. - error 401
-            if(self::fileIsset($this->name) && isset($this->error[$statusCode])){
+            if($this->files->isset() && isset($this->error[$statusCode])){
                 $this->data = [
                     'message'   => $this->translation($statusCode),
                     'status'    => (int) $statusCode,
@@ -103,7 +110,7 @@ trait FileValidatorTrait{
             }
         } 
         
-        // begin file validation
+        // Start file validation
         else {
 
             $validationAttempt = true;
@@ -117,7 +124,7 @@ trait FileValidatorTrait{
             // mimeExtensions
             $mimeExtensions = $mime['mimeExtensions'];
 
-            foreach($this->fileItemsData() as $key => $file){
+            foreach($this->files->get() as $key => $file){
 
                 // if image width and height is allowed
                 $imageSizeAllowed = $this->validateImageDimensions($file->imageSize(), $file);
@@ -158,7 +165,7 @@ trait FileValidatorTrait{
                 /**
                 * Maximum file upload exceeded. - error 403
                 */
-                elseif($this->fileItemsDataCount() > $this->config['limit'])
+                elseif($this->files->count() > $this->config['limit'])
                 {
                     $statusCode = '403';
                     if(isset($this->error[$statusCode])){
@@ -296,22 +303,6 @@ trait FileValidatorTrait{
         }
 
         return $config;
-    }
-    
-    /**
-     * Count items Total
-     */
-    private function fileItemsDataCount(): int
-    {
-        return count($this->fileItemsData());
-    }
-    
-    /**
-     * Return file `items` data to be validated
-     */
-    private function fileItemsData(): mixed
-    {
-        return $this->files[$this->name];
     }
 
     /**

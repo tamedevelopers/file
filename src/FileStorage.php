@@ -16,37 +16,27 @@ class FileStorage extends FileMethod{
     use FileStorageTrait, CommonTrait;
 
     /**
-     * Upload Input name
-     *
-     * @var string|null
+     * @var string|null Upload Input name
      */
     private $name;
 
     /**
-     * Upload Input name
-     *
-     * @var string|null
+     * @var string|null Upload Input name
      */
     private $folder;
 
     /**
-     * File
-     *
-     * @var mixed
+     * @var mixed File
      */
     private $file;
     
     /**
-     * Upload Data
-     *
-     * @var array|null
+     * @var array|null Upload Data
      */
     private $config;
 
     /**
-     * Driver Types
-     *
-     * @var array|null
+     * @var array|null Driver Types
      */
     private $drivers;
     

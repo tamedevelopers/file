@@ -48,8 +48,24 @@ trait CommonTrait{
                 break;
         }
 
-        // Free up memory.
-        imagedestroy($gdImage);
+        $this->freeMemoryFromImage($gdImage);
+    }
+
+    /**
+     * Free Memory From Image
+     *
+     * @param mixed $gdImage
+     * @return void
+     */
+    private function freeMemoryFromImage($gdImage = null)
+    {
+        if ($gdImage instanceof \GdImage) {
+            unset($gdImage);
+        }
+
+        if(isset($gdImage)){
+            unset($gdImage);
+        }
     }
 
     /**

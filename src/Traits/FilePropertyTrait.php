@@ -16,11 +16,18 @@ trait FilePropertyTrait{
     protected $name;
 
     /**
-     * File data
+     * File Bag Data
      *
      * @var null|\Tamedevelopers\Support\Capsule\FileBag
      */
     protected $files;
+
+    /**
+     * Cache of created instances by field name
+     * 
+     * @var array<string, static>
+     */
+    protected static $instances = [];
 
     /**
      * File Uploaded Data

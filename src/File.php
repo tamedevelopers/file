@@ -48,9 +48,12 @@ class File extends FileMethod{
     public function __construct($name = null, $files = null)
     {
         if(!empty($name)){
-            $this->name = $name;
+            $this->name  = $name;
             $this->files = FileBag::collect($name);
         }
+
+        // Store instance mapped to its input name
+        static::$instances[$name] = $this;
     }
     
     /**

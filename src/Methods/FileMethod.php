@@ -4,94 +4,172 @@ declare(strict_types=1);
 
 namespace Tamedevelopers\File\Methods;
 
+use Tamedevelopers\Support\Str;
+
 /**
- * @property  mixed $file
+ * Abstract FileMethod Class
+ *
+ * @method static bool fileIsset(string|null $name = null) Check if a file input key exists in$_FILES
+ * @method static bool isset(string|null $name = null) Alias for fileIsset()
+ * @method static bool notEmpty(string|null $name = null) Check if a file input has uploaded files
+ * @method static bool isEmpty(string|null $name = null) Check if a file input is empty or not uploaded
+ * @method static bool isNotEmpty(string|null $name = null) Check if a file input has uploaded files
+ * @method static bool has(string|null $name = null) Check if a file input has uploaded files
+ * 
+ * @method bool fileIsset(string|null $name = null) Check if a file input key exists in$_FILES
+ * @method bool isset(string|null $name = null) Alias for fileIsset()
+ * @method bool notEmpty(string|null $name = null) Check if a file input has uploaded files
+ * @method bool isEmpty(string|null $name = null) Check if a file input is empty or not uploaded
+ * @method bool isNotEmpty(string|null $name = null) Check if a file input has uploaded files
+ * @method bool has(string|null $name = null) Check if a file input has uploaded files
+ * 
+ * @property mixed $instances
  */
 abstract class FileMethod{
-    
-    /**
-     * Check if File Input is set
-     *
-     * @param string|null $name
-     * @return bool
-     */
-    static public function fileIsset($name = null)
-    {
-        return isset($_FILES[self::getFileName($name)]);
-    }
-    
-    /**
-     * Alias for fileIsset
-     *
-     * @param string|null $name
-     * @return bool
-     */
-    static public function isset($name = null)
-    {
-        return self::fileIsset($name);
-    }
-    
-    /**
-     * Check if File Input is not empty
-     *
-     * @param string|null $name
-     * @return bool
-     */
-    static public function notEmpty($name = null)
-    {
-        $fileName = self::getFileName($name);
 
-        if(isset($_FILES[$fileName]) && !empty($_FILES[$fileName]['name'][0])){
-            return true;
+    /**
+     * Handle dynamic instance method calls.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     * @throws \BadMethodCallException
+     */
+    public function __call(string $method, array$arguments)
+    {
+        $protectedMethod = 'protected' . ucfirst($method);
+
+        if (method_exists($this, $protectedMethod)) {
+            return $this->{$protectedMethod}(...$arguments);
         }
 
-        return false;
+        throw new \BadMethodCallException("Method {$method} does not exist on " . static::class);
     }
 
     /**
-     * Check if File Input is Empty
+     * Handle dynamic static method calls.
+     *
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     * @throws \BadMethodCallException
+     */
+    public static function __callStatic(string $method, array$arguments)
+    {
+        $protectedMethod = 'protected' . ucfirst($method);
+        $name = $arguments[0] ?? null;
+
+        $instance = static::resolveStaticInstance($name);
+
+        if (method_exists($instance,$protectedMethod)) {
+            return $instance->{$protectedMethod}(...$arguments);
+        }
+
+        throw new \BadMethodCallException("Static method {$method} does not exist on " . static::class);
+    }
+
+    /**
+     * Resolve or instantiate a File object for static execution.
      *
      * @param string|null $name
-     * @return bool
+     * @return static
      */
-    static public function isEmpty($name = null)
+    protected static function resolveStaticInstance(?string $name = null)
     {
-        return ! self::notEmpty($name);
+        if (!empty($name) && isset(static::$instances[$name])) {
+            return static::$instances[$name];
+        }
+
+        return new static($name);
     }
 
     /**
-     * Check if File Input not empty
+     * Check if a specific file input key exists in the $_FILES array.
      *
-     * @param string|null $name
+     * @param string|null $name Field name or null to use current instance name
      * @return bool
      */
-    static public function isNotEmpty($name = null)
+    protected function protectedFileIsset($name = null): bool
     {
-        return self::notEmpty($name);
+        return isset($_FILES[$this->getFileName($name)]);
     }
 
     /**
-     * Check if File Input not empty
+     * Alias for `protectedFileIsset()`.
      *
-     * @param string|null $name
+     * @param string|null $name Field name or null to use current instance name
      * @return bool
      */
-    static public function has($name = null)
+    protected function protectedIsset($name = null): bool
     {
-        return self::notEmpty($name);
+        return $this->protectedFileIsset($name);
     }
 
     /**
-     * Get File Name
+     * Check if a file input has uploaded files (supports single and multi-file inputs).
+     *
+     * @param string|null $name Field name or null to use current instance name
+     * @return bool
+     */
+    protected function protectedNotEmpty($name = null): bool
+    {
+        $fileName = $this->getFileName($name);
+
+        if (empty($fileName) || !isset($_FILES[$fileName]['name'])) {
+            return false;
+        }
+
+        $fileNames = $_FILES[$fileName]['name'];
+
+        if (self::isArray($fileNames)) {
+            return !empty(Str::head($fileNames));
+        }
+
+        return !empty($fileNames);
+    }
+
+    /**
+     * Check if a file input is empty or has no uploaded files.
+     *
+     * @param string|null $name Field name or null to use current instance name
+     * @return bool
+     */
+    protected function protectedIsEmpty($name = null): bool
+    {
+        return !$this->protectedNotEmpty($name);
+    }
+
+    /**
+     * Check if a file input has uploaded files (alias for `notEmpty`).
+     *
+     * @param string|null $name Field name or null to use current instance name
+     * @return bool
+     */
+    protected function protectedIsNotEmpty($name = null): bool
+    {
+        return $this->protectedNotEmpty($name);
+    }
+
+    /**
+     * Check if a file input has uploaded files (alias for `notEmpty`).
+     *
+     * @param string|null $name Field name or null to use current instance name
+     * @return bool
+     */
+    protected function protectedHas($name = null): bool
+    {
+        return $this->protectedNotEmpty($name);
+    }
+
+    /**
+     * Resolve the active input field name.
      *
      * @param string|null $name
      * @return string|null
      */
-    static protected function getFileName($name = null)
+    protected function getFileName($name = null): ?string
     {
-        return empty($name) 
-            ? static::$file->getName()
-            : $name;
+        return empty($name) ? $this->getName() :$name;
     }
      
     /**

@@ -272,6 +272,19 @@ class File extends FileMethod{
     }
      
     /**
+     * Upload Label Name
+     *
+     * @param  string $label
+     * @return $this
+     */
+    public function label($label)
+    {
+        $this->config['label'] = $label;
+
+        return $this;
+    }
+     
+    /**
      * Upload limit
      *
      * @param  int|string $limit

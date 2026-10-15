@@ -86,6 +86,7 @@ trait FilePropertyTrait{
         'width'     => null,
         'height'    => null,
         'size'      => null,
+        'label'     => null,
         'mime'      => 'image',
         'structure' => null,
         'generate'  => true,

@@ -37,9 +37,6 @@ trait FileValidatorTrait{
      */
     private function proceedToSave()
     {
-        // change the correct uploaded message
-        $this->data["message"] = $this->translation('200');
-
         // check if file item is true 
         // and count is more than 0
         if($this->files->valid()->count() > 0){
@@ -102,7 +99,7 @@ trait FileValidatorTrait{
             // Select file to upload. - error 401
             if($this->files->isset() && isset($this->error[$statusCode])){
                 $this->data = [
-                    'message'   => $this->translation($statusCode),
+                    'message'   => $this->translation($statusCode, true),
                     'status'    => (int) $statusCode,
                     'files'     => null,
                 ];
@@ -151,9 +148,10 @@ trait FileValidatorTrait{
     
                         $this->data = [
                             "status"  => (int) $statusCode, 
-                            "message" => sprintf("%s %s", 
+                            "message" => sprintf("%s %s %s", 
+                                $this->translateLabel(),
                                 $this->translation($statusCode), 
-                                $byteToUnit
+                                $byteToUnit,
                             ), 
                             "files" => null,
                         ];
@@ -176,7 +174,8 @@ trait FileValidatorTrait{
 
                         $this->data = [
                             "status"  => (int) $statusCode, 
-                            "message" => sprintf("%s %s(%s)", 
+                            "message" => sprintf("%s %s %s(%s)", 
+                                $this->translateLabel(),
                                 $this->translation($statusCode), 
                                 $limit, 
                                 $trans
@@ -196,7 +195,8 @@ trait FileValidatorTrait{
                     if(isset($this->error[$statusCode])){
                         $this->data = [
                             "status"  => (int) $statusCode, 
-                            "message" => sprintf("%s <br> %s %s", 
+                            "message" => sprintf("%s %s <br> %s %s", 
+                                $this->translateLabel(),
                                 $file->name(), 
                                 $this->translation($statusCode), 
                                 implode(' ', $mimeExtensions)
@@ -231,7 +231,7 @@ trait FileValidatorTrait{
             if($validationAttempt){
                 $this->data = [
                     "status"    => 200,
-                    "message"   => "File validated successfully:",
+                    "message"   => $this->translation('200', true),
                 ];
                 $this->success = true;
             }
@@ -257,15 +257,42 @@ trait FileValidatorTrait{
      * Get Transalation Message
      *
      * @param  mixed $mode
+     * @param  bool $withLabel
      * @return mixed
      */
-    private function translation($mode = null)
+    private function translation($mode = null, $withLabel = false)
     {
         $cached = static::$cachedConfig;
 
-        return !empty($cached)
-            ? $cached['message'][$mode] ?? $cached['message'] 
-            : null;
+        if(!empty($cached)){
+            $message = $cached['message'][$mode] ?? $cached['message'];
+
+            if($withLabel){
+                return sprintf("%s %s",
+                    $message, 
+                    $this->translateLabel()
+                );
+            }
+
+            return $message;
+        }
+
+        return null;
+    }
+
+    /**
+     * Translate Label
+     */
+    private function translateLabel(): string|null
+    {
+        $label = $this->config['label'] ?? null;
+
+        if(!empty($label)){
+            $label = mb_ucfirst($label);
+            return "[{$label}]";
+        }
+
+        return null;
     }
     
     /**
@@ -363,11 +390,13 @@ trait FileValidatorTrait{
             $sWidth  = $config['width'];
             $sHeight = $config['height'];
 
+            // $this->translateLabel(),
+
             // Ensure valid image dimensions
             if (empty($size['width']) || empty($size['height']) || $size['width'] <= 0 || $size['height'] <= 0) {
                 return [
                     'response' => false,
-                    'message'  => 'Invalid image dimensions',
+                    'message'  => "Invalid image dimensions {$this->translateLabel()}",
                 ];
             }
 
@@ -384,7 +413,8 @@ trait FileValidatorTrait{
                         return [
                             'response' => false,
                             'message'  => sprintf(
-                                "%s %s:%spx",
+                                "%s %s %s:%spx",
+                                $this->translateLabel(),
                                 $this->translation('405'),
                                 $this->translation('width'),
                                 $sWidth['size']
@@ -399,7 +429,8 @@ trait FileValidatorTrait{
                         return [
                             'response' => false,
                             'message'  => sprintf(
-                                "%s %s:%spx",
+                                "%s %s %s:%spx",
+                                $this->translateLabel(),
                                 $this->translation('405x'),
                                 $this->translation('width'),
                                 $sWidth['size']
@@ -422,7 +453,8 @@ trait FileValidatorTrait{
                         return [
                             'response' => false,
                             'message'  => sprintf(
-                                "%s %s:%spx",
+                                "%s %s %s:%spx.",
+                                $this->translateLabel(),
                                 $this->translation('405'),
                                 $this->translation('height'),
                                 $sHeight['size']
@@ -437,7 +469,8 @@ trait FileValidatorTrait{
                         return [
                             'response' => false,
                             'message'  => sprintf(
-                                "%s %s:%spx",
+                                "%s %s %s:%spx.",
+                                $this->translateLabel(),
                                 $this->translation('405x'),
                                 $this->translation('height'),
                                 $sHeight['size']

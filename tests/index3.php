@@ -1,9 +1,6 @@
 <?php
 
 use Tamedevelopers\File\File;
-use Tamedevelopers\Support\Env;
-use Tamedevelopers\Support\Capsule\FileBag;
-
 
 //on using comoposer autoload
 include_once __DIR__  . "/../vendor/autoload.php";
@@ -38,8 +35,8 @@ $upload = File::name('avatar')
                 // );
 
                 $response
-                    ->resize(400, 400, true)
-                    ->watermark('tests/watermark.png', 'top right', 20)
+                    // ->resize(400, 400, true)
+                    // ->watermark('tests/watermark.png', 'top right', 20)
                     ->compress()
                     ;
             });
@@ -54,8 +51,8 @@ $upload = File::name('avatar')
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <?= FileBag::publishJS(); ?>
-    <?= FileBag::publishMaxSizeJS(); ?>
+    <?= File::publishJS(); ?>
+    <?= File::publishMaxSizeJS(); ?>
 </head>
 <body>
     <center>

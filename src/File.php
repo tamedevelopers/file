@@ -78,7 +78,10 @@ class File extends FileMethod{
         $this->proceedToValidate();
 
         if(!$this->success){
-            if(in_array($this->getStatus(), [401, 402, 403, 404, 405])){
+            $errors = $this->error;
+            unset($errors['200']);
+            
+            if(in_array($this->getStatus(), array_values($errors))){
                 $this->callback($closure);
             }
         }
@@ -573,6 +576,18 @@ class File extends FileMethod{
     public function publishJS()
     {
         return FileBag::publishJS();
+    }
+
+    /** 
+     * Publish JavaScript code to validate file size before upload with a modern UI notification
+     * 
+     * @param string|null $customCssClass Optional custom CSS class to style the popup alert
+     * @param int $durationMs Auto-close duration in milliseconds (default: 4000ms / 4s)
+     * @return string
+     */
+    public function publishMaxSizeJS($customCssClass = null, $durationMs = 2000)
+    {
+        return FileBag::publishMaxSizeJS($customCssClass, $durationMs);
     }
     
     /**

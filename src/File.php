@@ -573,7 +573,7 @@ class File extends FileMethod{
      * 
      * @return string JavaScript code
      */
-    public function publishJS()
+    public static function publishJS()
     {
         return FileBag::publishJS();
     }
@@ -585,7 +585,7 @@ class File extends FileMethod{
      * @param int $durationMs Auto-close duration in milliseconds (default: 4000ms / 4s)
      * @return string
      */
-    public function publishMaxSizeJS($customCssClass = null, $durationMs = 2000)
+    public static function publishMaxSizeJS($customCssClass = null, $durationMs = 2000)
     {
         return FileBag::publishMaxSizeJS($customCssClass, $durationMs);
     }

@@ -26,6 +26,7 @@
     * [Form](#form)
     * [Unlink](#unlink)
     * [publishJS](#publishJS)
+    * [publishMaxSizeJS](#publishMaxSizeJS)
 * [Usage](#usage)
   * [Name](#name)
   * [Driver](#driver)

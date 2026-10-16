@@ -109,7 +109,7 @@ trait FileTrait{
     /**
      * Remove unwanted Filter response status code
      *
-     * @param  401|402|403|404|405|200|array $filter
+     * @param  '401'|'402'|'403'|'404'|'405'|'200'|array $filter
      * 
      * 401 => Select file to upload",
      * 402 => File upload is greater than allowed size of",

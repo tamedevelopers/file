@@ -28,6 +28,9 @@ use Tamedevelopers\Support\Tame;
  * @copyright 2021-2026 Tame Developers
  * @license   http://www.opensource.org/licenses/MIT The MIT License
  * @link https://github.com/tamedevelopers/file
+ * 
+ * @method mixed publishJS()
+ * @method mixed publishMaxSizeJS($customCssClass = null, $durationMs = 2000)
  */
 class File extends FileMethod{
 
@@ -210,6 +213,23 @@ class File extends FileMethod{
         $this->config['generate'] = $allow;
 
         return $this;
+    }
+
+    /**
+     * Remove 401 Filter response status code
+     *
+     * @param bool $required
+     * @return $this
+     */
+    public function required(?bool $required = true)
+    {
+        $filter = [];
+
+        if(!$required){
+            $filter = [401];
+        }
+
+        return $this->filter($filter);
     }
     
     /**

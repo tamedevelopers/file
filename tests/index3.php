@@ -24,6 +24,9 @@ $upload = File::name('avatar')
             ->limit(2)
             ->size('10.5mb') // override global settings
             ->mime('image')
+            ->filterExtention('gif')
+            ->addExtention('pdf')
+            ->label('User Avatar')
             ->validate()
             ->save(function($response){
 

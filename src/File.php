@@ -49,7 +49,7 @@ class File extends FileMethod{
     {
         if(!empty($name)){
             $this->name  = $name;
-            $this->files = FileBag::collect($name);
+            $this->file = FileBag::collect($name);
         }
 
         // Store instance mapped to its input name
@@ -124,7 +124,7 @@ class File extends FileMethod{
         $watermark = new ImageWatermark(
             object: $this, 
             name:   $this->name, 
-            files:  $this->files,
+            files:  $this->file,
         );
 
         $watermark->watermark(
@@ -149,7 +149,7 @@ class File extends FileMethod{
         $resize = new ImageAutoresize(
             object: $this, 
             name:   $this->name, 
-            files:  $this->files,
+            files:  $this->file,
         );
 
         $resize->resize($width, $height, $equalResize);
@@ -167,7 +167,7 @@ class File extends FileMethod{
         $compress = new ImageCompress(
             object: $this, 
             name:   $this->name, 
-            files:  $this->files,
+            files:  $this->file,
         );
 
         $compress->compress();

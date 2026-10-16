@@ -39,10 +39,10 @@ trait FileValidatorTrait{
     {
         // check if file item is true 
         // and count is more than 0
-        if($this->files->valid()->count() > 0){
+        if($this->file->valid()->count() > 0){
 
             // look through each file and save to storage
-            foreach($this->files->get() as $file){
+            foreach($this->file->get() as $file){
 
                 // instance of File Storage
                 $storage = new FileStorage(
@@ -92,12 +92,12 @@ trait FileValidatorTrait{
         /**
         * Check if file is empty. - error 401
         */
-        if($this->files->valid()->isEmpty())
+        if($this->file->valid()->isEmpty())
         {
             $statusCode = '401';
 
             // Select file to upload. - error 401
-            if($this->files->isset() && isset($this->error[$statusCode])){
+            if($this->file->isset() && isset($this->error[$statusCode])){
                 $this->data = [
                     'message'   => $this->translation($statusCode, true),
                     'status'    => (int) $statusCode,
@@ -121,7 +121,7 @@ trait FileValidatorTrait{
             // mimeExtensions
             $mimeExtensions = $mime['mimeExtensions'];
 
-            foreach($this->files->get() as $key => $file){
+            foreach($this->file->get() as $key => $file){
 
                 // if image width and height is allowed
                 $imageSizeAllowed = $this->validateImageDimensions($file->imageSize(), $file);
@@ -163,7 +163,7 @@ trait FileValidatorTrait{
                 /**
                 * Maximum file upload exceeded. - error 403
                 */
-                elseif($this->files->count() > $this->config['limit'])
+                elseif($this->file->count() > $this->config['limit'])
                 {
                     $statusCode = '403';
                     if(isset($this->error[$statusCode])){
@@ -498,8 +498,8 @@ trait FileValidatorTrait{
         $extension = $this->config['extension'] ?? [];
 
         // allowed mime types after excluding filter types
-        $filteredMime = $this->excludeTypes($filter); 
-        $mime = $this->includeTypes($extension, $filteredMime); 
+        $filteredMime = $this->excludeTypes($filter, [], $this->config); 
+        $mime = $this->includeTypes($extension, $filteredMime, $this->config);
 
         // Mime types
         $mimeTypes = $mime['mime'][$this->config['mime']] ?? $default['mime']['image'];

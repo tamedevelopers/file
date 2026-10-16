@@ -194,8 +194,8 @@ trait FileTrait{
         $instance = $this->name($name);
 
         // loop through to get temporary uploaded file data
-        if(!empty($instance->files[$name]) && is_array($instance->files[$name])){
-            foreach($instance->files[$name] as $item){
+        if(!empty($instance->file[$name]) && is_array($instance->file[$name])){
+            foreach($instance->file[$name] as $item){
                 return $item->imageSize();
             }
         }

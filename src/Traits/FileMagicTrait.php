@@ -62,7 +62,7 @@ trait FileMagicTrait{
     {
         $this->object   = $object;
         $this->name     = $name;
-        $this->files    = $files;
+        $this->file    = $files;
         $this->folder   = $object->folder ?? null;
         $this->config   = $object->config ?? null;
         $this->uploads  = $object->uploads ?? null;

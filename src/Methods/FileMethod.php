@@ -369,11 +369,12 @@ abstract class FileMethod{
      *
      * @param array $extensions
      * @param array $mimeTypes
+     * @param array $config
      * @return array
      */
-    protected static function excludeTypes($extensions, $mimeTypes = [])
+    protected static function excludeTypes($extensions, $mimeTypes = [], $config = [])
     {
-        return static::filterTypes($extensions, $mimeTypes, true);
+        return static::filterTypes($extensions, $mimeTypes, $config);
     }
 
     /**
@@ -381,11 +382,12 @@ abstract class FileMethod{
      * 
      * @param array $extensions
      * @param array $mimeTypes
+     * @param array $config
      * @return array
      */
-    protected static function includeTypes($extensions, $mimeTypes = [])
+    protected static function includeTypes($extensions, $mimeTypes = [], $config = [])
     {
-        return static::filterTypes($extensions, $mimeTypes, false);
+        return static::filterTypes($extensions, $mimeTypes, $config, false);
     }
 
     /**
@@ -393,14 +395,15 @@ abstract class FileMethod{
      *
      * @param array $extensions Raw extensions without dots (e.g., ['png', 'pdf'])
      * @param array $mimeTypes
+     * @param array $config
      * @param bool $isExclude True to exclude, false to include
      * @return array
      */
-    protected static function filterTypes($extensions, $mimeTypes = [], $isExclude = true)
+    protected static function filterTypes($extensions, $mimeTypes = [], $config = [], $isExclude = true)
     {
         $allowed = !empty($mimeTypes) ? $mimeTypes : static::allowedMimeType();
         $types   = static::baseTypes();
-        $mime    = static::$file->config['mime'] ?? null;
+        $mime    = $config['mime'] ?? null;
 
         // If configured mime group doesn't exist, return base allowed types
         if (!$mime || !isset($allowed['extension'][$mime])) {

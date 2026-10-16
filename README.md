@@ -490,10 +490,6 @@ File::name('avatar')
 ```php
 $file = File::name('avatar')
         ->width(700, false);
-
-dd(
-    $file
-);
 ```
 
 ### Height

@@ -20,7 +20,7 @@ trait FilePropertyTrait{
      *
      * @var null|\Tamedevelopers\Support\Capsule\FileBag
      */
-    protected $files;
+    protected $file;
 
     /**
      * Cache of created instances by field name

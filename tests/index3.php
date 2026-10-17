@@ -37,6 +37,8 @@ $upload = File::name('avatar')
                 //     tasset("public/{$response->first('path')}", true),
                 // );
 
+                // $response->remove();
+
                 $response
                     // ->resize(400, 400, true)
                     // ->watermark('tests/watermark.png', 'top right', 20)

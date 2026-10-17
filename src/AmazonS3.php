@@ -55,7 +55,7 @@ class AmazonS3
             'endpoint' => $endpoint,
         ];
 
-        self::$s3 = new S3Client([
+        self::$s3 = new \S3Client([
             'version' => 'latest',
             'region'  => self::$data['region'], 
             'credentials' => [
@@ -92,7 +92,7 @@ class AmazonS3
             ]);
 
             return $result->get('ObjectURL');
-        } catch (S3Exception $e) {
+        } catch (\S3Exception $e) {
             return $e->getMessage();
         }
     }
@@ -128,7 +128,7 @@ class AmazonS3
         try {
             // Get the public URL of the object
             return self::$s3->getObjectUrl(self::$data['bucketName'], $key ?? $default);
-        } catch (S3Exception $e) {
+        } catch (\S3Exception $e) {
             return $default;
         }
     }
@@ -137,7 +137,7 @@ class AmazonS3
      * Delete from s3 bucket
      *
      * @param string|null $key
-     * @return void
+     * @return bool
      */
     static public function delete($key = null)
     {
@@ -155,7 +155,7 @@ class AmazonS3
             ]);
         
             return true;
-        } catch (S3Exception $e) {
+        } catch (\S3Exception $e) {
             return false;
         }
     }

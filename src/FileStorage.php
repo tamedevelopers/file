@@ -4,7 +4,6 @@ namespace Tamedevelopers\File;
 
 use Exception;
 use Tamedevelopers\Support\Env;
-use Tamedevelopers\Support\Tame;
 use Tamedevelopers\File\Methods\FileMethod;
 use Tamedevelopers\File\Traits\CommonTrait;
 use Tamedevelopers\Support\Capsule\Manager;
@@ -69,23 +68,14 @@ class FileStorage extends FileMethod{
     {
         $migrate = $this->migrate();
 
-        // Only try to save a copy of file if file does'nt exists
-        if(!Tame::exists($migrate['fullPath'])){
-            @move_uploaded_file($migrate['tmp'], $migrate['fullPath']);
-        }
+        // Always replace with fresh data
+        // hy generate is true default
+        $this->file->move($migrate['fullPath']);
+        $this->file->cleanup();
 
         // check if driver is local
         if(!$this->isLocalDriver()){
-            // driver
-            $driver = $this->config['driver'];
-
-            // validate if package is installed
-            $this->isDriverPackageInstalled(
-                $this->getCloudAssociateClass($driver)
-            );
-
-            // initialize third-party bucket
-            $bucket = new $this->drivers[$driver]();
+            $bucket = $this->getBucketDriver();
 
             // get filename without extension
             $fileName = pathinfo($migrate['name'], PATHINFO_FILENAME);
@@ -100,6 +90,25 @@ class FileStorage extends FileMethod{
         }
         
         return $migrate;
+    }
+
+    /**
+     * Get Third-Party Bucket Driver
+     *
+     * @return mixed
+     */
+    private function getBucketDriver()
+    {
+        // driver
+        $driver = $this->config['driver'];
+
+        // validate if package is installed
+        $this->isDriverPackageInstalled(
+            $this->getCloudAssociateClass($driver)
+        );
+
+        // initialize third-party bucket
+        return new $this->drivers[$driver]();
     }
 
     /**

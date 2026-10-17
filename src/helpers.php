@@ -7,8 +7,8 @@ use Tamedevelopers\File\File;
 if (! function_exists('TameFile')) {
     /**
      * Instance of File Class
-     * @param  string|null $name
      * 
+     * @param  string|null $name
      * @return \Tamedevelopers\File\File
      */
     function TameFile($name = null)
@@ -22,15 +22,37 @@ if (! function_exists('config_file')) {
     /**
      * Global Configuration
      *
-     * @param  array $message
-     * - [401|402|403|404|405|405x|200|kb|mb|gb|and|width|height|files|file|limit|allowed_files|max]
+     * @param  array{
+     *  '401': string,
+     *  '402': string,
+     *  '403': string,
+     *  '404': string,
+     *  '405': string,
+     *  '405x': string,
+     *  '200': string,
+     *  kb: string,
+     *  mb: string,
+     *  and: string,
+     *  width: string,
+     *  height: string,
+     *  files: string,
+     *  file: string,
+     *  limit: string,
+     *  allowed_files: string,
+     *  max: string,
+     * } $message
      * 
-     * @param  array $config
-     * - [limit|size|mime|baseDir|driver|structure|generate]
+     * @param  array{
+     *  limit: string|int,
+     *  size: string|int,
+     *  mime: string,
+     *  baseDir: string,
+     *  driver: 'local'|'s3',
+     *  structure: 'default'|'year'|'month'|'day',
+     *  generate: bool,
+     * } $config
      * 
-     * @param  array $class
-     * - [error|success]
-     *  
+     * @param  array{error: mixed, success: mixed} $class
      * @return void
      */
     function config_file($message = [], $config = [], $class = [])

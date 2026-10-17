@@ -54,7 +54,9 @@ trait FileValidatorTrait{
                 );
 
                 // get data response
-                $this->uploads[] = $storage->handle();
+                $this->uploads[] = array_merge([
+                    'storage' => $storage
+                ], $storage->handle());
             }
         }
 

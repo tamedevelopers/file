@@ -177,27 +177,38 @@ abstract class FileMethod{
      *
      * @param  mixed $uploads
      * @param  bool $first
+     * @param bool $storage
      * @return array|null
      */
-    static protected function getUploads($uploads, $first = false)
+    static protected function getUploads($uploads, $first = false, $storage = false)
     {
         if($first){
             if(self::isArray($uploads)){
-                $uploads = $uploads[0];
-                return [
-                    'name'  => $uploads['name'],
-                    'path'  => $uploads['path'],
-                    'url'   => $uploads['urlPath'],
-                ];
+                $upload = $uploads[0];
+                $merge = $storage ? ['storage' => $upload['storage']] : [];
+
+                return array_merge([
+                    'name'      => $upload['name'],
+                    'path'      => $upload['path'],
+                    'fullPath'  => $upload['fullPath'],
+                    'url'       => $upload['urlPath'],
+                ], $merge);
             }
         } elseif(self::isArray($uploads)){
             $files = [];
+            $uploads = isset($uploads[0]) && is_array($uploads[0]) 
+                ? $uploads 
+                : [$uploads];
+
             foreach($uploads as $key => $upload){
-                $files[$key] = [
-                    'name'  => $upload['name'],
-                    'path'  => $upload['path'],
-                    'url'   => $upload['urlPath'],
-                ];
+                $merge = $storage ? ['storage' => $upload['storage']] : [];
+
+                $files[$key] = array_merge([
+                    'name'      => $upload['name'],
+                    'path'      => $upload['path'],
+                    'fullPath'  => $upload['fullPath'],
+                    'url'       => $upload['urlPath'],
+                ], $merge);
             }
 
             return $files;

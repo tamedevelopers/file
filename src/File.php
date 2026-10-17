@@ -14,6 +14,7 @@ use Tamedevelopers\File\Traits\FilePropertyTrait;
 use Tamedevelopers\File\Traits\FileStorageTrait;
 use Tamedevelopers\File\Traits\FileTrait;
 use Tamedevelopers\File\Traits\FileValidatorTrait;
+use Tamedevelopers\Support\Capsule\File as CapsuleFile;
 use Tamedevelopers\Support\Capsule\FileBag;
 use Tamedevelopers\Support\Server;
 use Tamedevelopers\Support\Str;
@@ -28,9 +29,7 @@ use Tamedevelopers\Support\Tame;
  * @copyright 2021-2026 Tame Developers
  * @license   http://www.opensource.org/licenses/MIT The MIT License
  * @link https://github.com/tamedevelopers/file
- * 
- * @method mixed publishJS()
- * @method mixed publishMaxSizeJS($customCssClass = null, $durationMs = 2000)
+ * @see \Tamedevelopers\Support\Capsule\FileBag
  */
 class File extends FileMethod{
 
@@ -53,21 +52,21 @@ class File extends FileMethod{
         if(!empty($name)){
             $this->name  = $name;
             $this->file = FileBag::collect($name);
-        }
 
-        // Store instance mapped to its input name
-        static::$instances[$name] = $this;
+            // Store instance mapped to its input name
+            static::$instances[$name] = $this;
+        }
     }
     
     /**
      * Initiliaze File Upload Using `name`
      *
-     * @param  string|null $fileName
+     * @param  string|null $name File name
      * @return $this
      */
-    static public function name($fileName = null)
+    static public function name($name = null)
     {
-        return new static($fileName);
+        return new static($name);
     }
 
     /**
@@ -111,6 +110,48 @@ class File extends FileMethod{
         }
 
         return $this;
+    }
+
+    /**
+     * Remove an already uploaded file
+     *
+     * @param  string|null $name
+     * @return bool
+     */
+    public function remove($name = null)
+    {
+        if (!empty($name) && isset(static::$instances[$name])) {
+            $file = static::$instances[$name];
+        } else{
+            $file = $this;
+        }
+
+        // Array to hold the result of every deletion attempt
+        $results = [];
+
+        foreach($file->getInternal() as $upload){
+            if($file->isLocalDriver()){
+                $results[] = CapsuleFile::delete($upload['fullPath']);
+            } else{
+                $bucket = $upload['storage']->getBucketDriver();
+
+                if(method_exists($bucket, 'delete')){
+                    $results[] = $bucket->delete($upload['path']);
+                } else {
+                    $results[] = false; 
+                }
+            }
+        }
+
+        // If the array is empty, there was nothing to delete (usually considered a success)
+        if (empty($results)) {
+            return true; 
+        }
+
+        // Get unique results. 
+        // If there is a 'false' in the array, in_array will return true.
+        // We use ! to invert it: if it HAS false, return false. If it's all true, return true.
+        return !in_array(false, array_unique($results), true);
     }
     
     /**
@@ -525,12 +566,12 @@ class File extends FileMethod{
     /**
      * Get First Element of Uploads
      * 
-     * @param 'name'|'path'|'url'|null $mode
+     * @param 'name'|'path'|'fullPath'|'url'|null $mode
      * @return array|string|null
      */
     public function first($mode = null)
     {
-        $data = self::getUploads($this->uploads, true);
+        $data = self::getUploads($this->uploads, true, false);
 
         return $data[$mode] ?? $data;
     }
@@ -538,12 +579,24 @@ class File extends FileMethod{
     /**
      * Get all Element of Uploads
      * 
-     * @param 'name'|'path'|'url'|null $mode
+     * @param 'name'|'path'|'fullPath'|'url'|null $mode
      * @return array|null
      */
     public function get($mode = null)
     {
-        $data = self::getUploads($this->uploads);
+        return $this->getInternal($mode, false);
+    }
+
+    /**
+     * Get all Element of Uploads
+     * 
+     * @param 'name'|'path'|'fullPath'|'url'|null $mode
+     * @param bool $storage
+     * @return array|null
+     */
+    private function getInternal($mode = null, $storage = true)
+    {
+        $data = self::getUploads($this->uploads, false, $storage);
         if(is_null($mode)){
             return $data;
         }
